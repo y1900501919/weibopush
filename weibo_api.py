@@ -33,7 +33,6 @@ def get_timeline():
         created_secs = time.mktime(created_timestamp.timetuple())
         time_diff = time.time() - created_secs
         
-        statuses_new.append(status)
         if (time_diff <= 300):
             statuses_new.append(status)
         else:
