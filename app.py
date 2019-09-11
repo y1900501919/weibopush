@@ -34,7 +34,7 @@ while True:
 group = ensure_one(bot.groups().search(required_group))
 
 ######################## Handle commands ########################
-@bot.register(group, except_self=False, run_async=False)
+@bot.register(group, except_self=False)
 def handle_msg(msg):
     if not msg.text:
         return
