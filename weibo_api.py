@@ -11,7 +11,7 @@ APP_SECRET = "52fcbb03a2ec45d54fd5c4b40a9582ba"
 ACCESS_TOKEN = "2.00UICb9GmcKYED184c921789UvEILB"
 WEIBO_API_TIME_FORMAT = "%a %b %d %H:%M:%S %z %Y"
 REQUEST_URL = "https://api.weibo.com/2/statuses/home_timeline.json"
-WEIBOLINK = "weibo.com/u/"
+WEIBOLINK = "https://m.weibo.cn/status/"
 
 
 # Get statuses in past 10 minutes
@@ -46,12 +46,12 @@ def process_status(status):
     content = status['text']
     timestr = status['created_at']
     post_uid = status['user']['id']
-    user_link = WEIBOLINK + str(post_uid)
+    weibo_id = status['id']
+    user_link = WEIBOLINK + str(weibo_id)
     poster_username = status['user']['name']
     created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
     formatted_timestr = datetime.strftime(created_timestamp, '%Y/%m/%d, %a, %H:%M:%S')
 
-    weibo_id = status['id']
     msg_body = formatted_timestr + '\n' + poster_username + '\n' + content + '\n' + user_link
     img_urls = [x['thumbnail_pic'].replace('thumbnail', 'middle') for x in status['pic_urls']]
 
