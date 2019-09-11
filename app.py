@@ -2,6 +2,7 @@ import os
 import atexit
 import shutil
 import time
+import requests
 from apscheduler.scheduler import Scheduler
 from wxpy import Bot, ensure_one, embed
 
@@ -46,15 +47,20 @@ def job_function():
     processed_statuses = [process_status(status) for status in statuses_to_send]
     for status in processed_statuses:
         wid = create_weibo_if_not_exists(status) # Saves to db if not exist
+        send_weibo(status, wid)
 
-        status_text = status['msg_body'] + '\nWeibo ID: ' + wid
-        img_urls = status['img_urls']
-        send_msg(status_text)
-        _ = [send_img(x) for x in img_urls]
+        
 
 
 sched.add_cron_job(job_function, minute='*/10')
 
+# Sends a weibo to group
+def send_weibo(status, wid=None):
+    weibo_id_str = '' if (not wid and not status.get('id', None)) else ('\nWeibo ID: ' + wid)
+    status_text = status['msg_body'] + weibo_id_str
+    img_urls = status['img_urls']
+    send_msg(status_text)
+    _ = [send_img(x) for x in img_urls]
 
 # Send message to grp
 def send_msg(text):
