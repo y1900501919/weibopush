@@ -43,7 +43,9 @@ def job_function():
     if not statuses_to_send:
         return
     processed_statuses = [process_status(status) for status in statuses_to_send]
-    for status_text, img_urls in processed_statuses:
+    for status in processed_statuses:
+        status_text = status['msg_body']
+        img_urls = status['img_urls']
         send_msg(status_text)
         _ = [send_img(x) for x in img_urls]
 
