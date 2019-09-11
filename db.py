@@ -2,7 +2,7 @@ import sqlite3
 import json
 
 sqlite_file = 'data.db'
-conn = sqlite3.connect(sqlite_file)
+conn = sqlite3.connect(sqlite_file, check_same_thread=False)
 
 def dict_factory(cursor, row):
     d = {}
