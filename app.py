@@ -14,8 +14,8 @@ bot = Bot(console_qr=True)
 bot.messages.max_history = 1000
 
 # Ensure wechat group exists in list (Can only get by name)
-# required_group = 'testtest'
-required_group = '姐(shǎ)夫(bī)观察小组'
+required_group = 'testtest'
+# required_group = '姐(shǎ)夫(bī)观察小组'
 while True:
     done = True
     if not bot.groups().search(required_group):
