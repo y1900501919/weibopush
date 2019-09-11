@@ -1,6 +1,3 @@
-from flask import Flask
-from flask_restful import Resource, Api
-
 import os
 import requests
 import atexit
@@ -10,10 +7,7 @@ import shutil
 from datetime import datetime
 from apscheduler.scheduler import Scheduler
 from pytz import timezone
-
 from wxpy import Bot, ensure_one, embed
-
-app = Flask(__name__)
 
 # Weibo API
 APP_KEY = "2815647836"
@@ -113,7 +107,7 @@ def get_timeline():
     statuses_new = []
     for status in statuses:
         timestr = status['created_at']
-        created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT).replace(tzinfo=timezone('UTC'))
+        created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT).replace(tzinfo=timezone('Asia/Singapore'))
         created_secs = time.mktime(created_timestamp.timetuple())
         time_diff = time.time() - created_secs
         if (time_diff <= 600):
@@ -122,13 +116,8 @@ def get_timeline():
             break
     
     return statuses_new
-        
-
 
 # Shutdown crontab when web service stops
 atexit.register(lambda: sched.shutdown(wait=False))
 
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port="9000", use_reloader=False)
-    embed()
+embed()
