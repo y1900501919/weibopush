@@ -33,6 +33,22 @@ while True:
 # Group
 group = ensure_one(bot.groups().search(required_group))
 
+######################## Handle commands ########################
+@bot.register(group, except_self=False, run_async=False)
+def handle_msg(msg):
+    if not msg.text:
+        return
+    
+    searchweibo_pattern = re.compile("^ *searchweibo +(\\d+) *$")
+    searchweibo_match = searchweibo_pattern.match(msg.text)
+    if searchweibo_match:
+        wid = int(searchweibo_match.groups()[0])
+        weibo = get_weibo_with_wid(wid)
+        send_weibo(weibo)
+        return
+    
+##################### End of handle commands ####################
+
 
 # Crontab
 sched = Scheduler()
@@ -82,23 +98,6 @@ def download_img(url, path):
         with open(path, 'wb') as f:
             response.raw.decode_content = True
             shutil.copyfileobj(response.raw, f)
-
-
-######################## Handle commands ########################
-@bot.register(group)
-def handle_msg(msg, except_self=False, run_async=False):
-    if not msg.text:
-        return
-    
-    searchweibo_pattern = re.compile("^ *searchweibo +(\\d+) *$")
-    searchweibo_match = searchweibo_pattern.match(msg.text)
-    if searchweibo_match:
-        wid = int(searchweibo_match.groups()[0])
-        weibo = get_weibo_with_wid(wid)
-        send_weibo(weibo)
-        return
-    
-##################### End of handle commands ####################
 
 
 # Shutdown crontab when web service stops
