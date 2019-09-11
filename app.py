@@ -36,15 +36,19 @@ group = ensure_one(bot.groups().search(required_group))
 ######################## Handle commands ########################
 @bot.register(group, except_self=False)
 def handle_msg(msg):
-    if not msg.text:
+    msg_content = msg.text
+    if not msg_content:
         return
     
+    msg_content = msg_content.lower()
+    
     searchweibo_pattern = re.compile("^ *searchweibo +(\\d+) *$")
-    searchweibo_match = searchweibo_pattern.match(msg.text)
+    searchweibo_match = searchweibo_pattern.match(msg_content)
     if searchweibo_match:
         wid = int(searchweibo_match.groups()[0])
         weibo = get_weibo_with_wid(wid)
-        send_weibo(weibo)
+        if weibo:
+            send_weibo(weibo)
         return
     
 ##################### End of handle commands ####################
@@ -85,6 +89,7 @@ def send_msg(text):
     group.send(text)
 
 # Send image to grp
+# TODO: set a timeout
 def send_img(url):
     img_path = "img_to_send.jpg"
     download_img(url, img_path)
