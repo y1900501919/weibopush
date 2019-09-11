@@ -3,11 +3,12 @@ import atexit
 import shutil
 import time
 import requests
+import re
 from apscheduler.scheduler import Scheduler
 from wxpy import Bot, ensure_one, embed
 
 from weibo_api import get_timeline, process_status
-from db import create_weibo_if_not_exists
+from db import create_weibo_if_not_exists, get_weibo_with_wid
 
 # Init wechat bot
 bot = Bot(console_qr=True)
@@ -49,7 +50,6 @@ def job_function():
         wid = create_weibo_if_not_exists(status) # Saves to db if not exist
         send_weibo(status, wid)
 
-        
 
 
 sched.add_cron_job(job_function, minute='*/5')
@@ -82,6 +82,23 @@ def download_img(url, path):
         with open(path, 'wb') as f:
             response.raw.decode_content = True
             shutil.copyfileobj(response.raw, f)
+
+
+######################## Handle commands ########################
+@bot.register(group)
+def handle_msg(msg, except_self=True, run_async=False):
+    if not msg.text:
+        return
+    
+    searchweibo_pattern = re.compile("^ *searchweibo +(\\d+) *$")
+    searchweibo_match = searchweibo_pattern.match(msg.text)
+    if searchweibo_match:
+        wid = int(searchweibo_match.groups()[0])
+        weibo = get_weibo_with_wid(wid)
+        send_weibo(weibo)
+        return
+    
+##################### End of handle commands ####################
 
 
 # Shutdown crontab when web service stops

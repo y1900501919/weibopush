@@ -31,3 +31,13 @@ def create_weibo_if_not_exists(weibo):
     cur.execute(insert_sql, (msg_body, post_uid, weibo_id, img_urls,))
     conn.commit()
     return cur.lastrowid
+
+
+def get_weibo_with_wid(wid):
+    cur = conn.cursor()
+
+    query_sql = 'select * from weibos where id=?'
+    cur.execute(query_sql, (wid,))
+    rows = cur.fetchall()
+    if rows: return rows[0]
+    return None
