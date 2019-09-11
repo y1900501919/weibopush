@@ -1,6 +1,3 @@
-from flask import Flask
-from flask_restful import Resource, Api
-
 import os
 import requests
 import atexit
@@ -10,10 +7,7 @@ import shutil
 from datetime import datetime
 from apscheduler.scheduler import Scheduler
 from pytz import timezone
-
 from wxpy import Bot, ensure_one, embed
-
-app = Flask(__name__)
 
 # Weibo API
 APP_KEY = "2815647836"
@@ -122,13 +116,8 @@ def get_timeline():
             break
     
     return statuses_new
-        
-
 
 # Shutdown crontab when web service stops
 atexit.register(lambda: sched.shutdown(wait=False))
 
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port="9000", use_reloader=False)
-    embed()
+embed()
