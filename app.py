@@ -86,7 +86,7 @@ def download_img(url, path):
 
 ######################## Handle commands ########################
 @bot.register(group)
-def handle_msg(msg, except_self=True, run_async=False):
+def handle_msg(msg, except_self=False, run_async=False):
     if not msg.text:
         return
     
