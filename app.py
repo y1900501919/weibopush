@@ -21,7 +21,7 @@ APP_SECRET = "52fcbb03a2ec45d54fd5c4b40a9582ba"
 ACCESS_TOKEN = "2.00UICb9GmcKYED184c921789UvEILB"
 WEIBO_API_TIME_FORMAT = "%a %b %d %H:%M:%S %z %Y"
 REQUEST_URL = "https://api.weibo.com/2/statuses/home_timeline.json"
-WEIBOLINK = "weibo.com/u/"
+WEIBOLINK = "https://m.weibo.cn/status/"
 
 # Init wechat bot
 bot = Bot(console_qr=True)
