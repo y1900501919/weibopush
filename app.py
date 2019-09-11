@@ -6,6 +6,7 @@ from apscheduler.scheduler import Scheduler
 from wxpy import Bot, ensure_one, embed
 
 from weibo_api import get_timeline, process_status
+from db import create_weibo_if_not_exists
 
 # Init wechat bot
 bot = Bot(console_qr=True)
@@ -44,7 +45,9 @@ def job_function():
         return
     processed_statuses = [process_status(status) for status in statuses_to_send]
     for status in processed_statuses:
-        status_text = status['msg_body']
+        wid = create_weibo_if_not_exists(status) # Saves to db if not exist
+
+        status_text = status['msg_body'] + '\nWeibo ID: ' + wid
         img_urls = status['img_urls']
         send_msg(status_text)
         _ = [send_img(x) for x in img_urls]

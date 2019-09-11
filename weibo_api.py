@@ -51,8 +51,8 @@ def process_status(status):
     created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
     formatted_timestr = datetime.strftime(created_timestamp, '%Y/%m/%d, %a, %H:%M:%S')
 
-    msg_body = formatted_timestr + '\n' + poster_username + '\n' + content + '\n' + user_link
     weibo_id = status['id']
+    msg_body = formatted_timestr + '\n' + poster_username + '\n' + content + '\n' + user_link
     img_urls = [x['thumbnail_pic'].replace('thumbnail', 'middle') for x in status['pic_urls']]
 
     result = dict()
