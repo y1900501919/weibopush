@@ -113,7 +113,7 @@ def get_timeline():
     statuses_new = []
     for status in statuses:
         timestr = status['created_at']
-        created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT).replace(tzinfo=timezone('UTC'))
+        created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT).replace(tzinfo=timezone('Asia/Singapore'))
         created_secs = time.mktime(created_timestamp.timetuple())
         time_diff = time.time() - created_secs
         if (time_diff <= 600):
