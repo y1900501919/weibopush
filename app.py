@@ -56,7 +56,9 @@ sched.add_cron_job(job_function, minute='*/5')
 
 # Sends a weibo to group
 def send_weibo(status, wid=None):
-    weibo_id_str = '' if (not wid and not status.get('id', None)) else ('\nWeibo ID: ' + wid)
+    if not wid:
+        wid = status.get('id', None)
+    weibo_id_str = '' if not wid else ('\nWeibo ID: ' + str(wid))
     status_text = status['msg_body'] + weibo_id_str
     img_urls = status['img_urls']
     send_msg(status_text)
