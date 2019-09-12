@@ -8,7 +8,7 @@ from apscheduler.scheduler import Scheduler
 from wxpy import Bot, ensure_one, embed
 
 from weibo_api import get_timeline, process_status
-from db import create_weibo_if_not_exists, get_weibo_with_wid
+from db import create_weibo_if_not_exists, get_weibo_with_wid, get_random_weibo
 
 # Init wechat bot
 bot = Bot(console_qr=True)
@@ -50,7 +50,15 @@ def handle_msg(msg):
         if weibo:
             send_weibo(weibo)
         return
-    
+
+    randomweibo_pattern = re.compile("^ *randomweibo *$")
+    randomweibo_match = searchweibo_pattern.match(msg_content)
+    if searchweibo_match:
+        weibo = get_random_weibo()
+        if weibo:
+            send_weibo(weibo)
+        return
+        
 ##################### End of handle commands ####################
 
 

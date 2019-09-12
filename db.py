@@ -41,3 +41,12 @@ def get_weibo_with_wid(wid):
     rows = cur.fetchall()
     if rows: return rows[0]
     return None
+
+
+def get_random_weibo():
+    cur = conn.cursor()
+    query_sql = 'select * FROM weibos order by RANDOM() limit 1'
+    cur.execute(query_sql)
+    rows = cur.fetchall()
+    if rows: return rows[0]
+    return None
