@@ -52,7 +52,7 @@ def handle_msg(msg):
         return
 
     randomweibo_pattern = re.compile("^ *randomweibo *$")
-    randomweibo_match = searchweibo_pattern.match(msg_content)
+    randomweibo_match = randomweibo_pattern.match(msg_content)
     if searchweibo_match:
         weibo = get_random_weibo()
         if weibo:
