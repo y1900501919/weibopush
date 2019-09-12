@@ -16,11 +16,15 @@ bot.messages.max_history = 1000
 
 # Ensure wechat group exists in list (Can only get by name)
 # required_group = 'testtest'
-required_group = '姐(shǎ)夫(bī)观察小组'
+production_group_name = '姐(shǎ)夫(bī)观察小组'
+test_group_name = 'testtest'
+required_groups = [production_group_name, test_group_name]
+
 while True:
     done = True
-    if not bot.groups().search(required_group):
-        done = False
+    for required_group in required_groups:
+        if not bot.groups().search(required_group):
+            done = False
     
     if not done:
         print("Not yet finished loading, try sending a message in the group.")
@@ -31,7 +35,8 @@ while True:
 
 
 # Group
-group = ensure_one(bot.groups().search(required_group))
+production_group = ensure_one(bot.groups().search(production_group_name))
+test_group = ensure_one(bot.groups().search(test_group_name))
 
 
 # Crontab
@@ -49,32 +54,35 @@ def job_function():
     for status in processed_statuses:
         exists, wid = create_weibo_if_not_exists(status) # Saves to db if not exist
         if not exists:
-            send_weibo(status, wid)
+            send_weibo(status, wid, test=False)
 
 
 
 sched.add_cron_job(job_function, minute='*/5')
 
 # Sends a weibo to group
-def send_weibo(status, wid=None):
+def send_weibo(status, wid=None, test=True):
     if not wid:
         wid = status.get('id', None)
     weibo_id_str = '' if not wid else ('\nWeibo ID: ' + str(wid))
     status_text = status['msg_body'] + weibo_id_str
     img_urls = status['img_urls']
-    send_msg(status_text)
+    send_msg(status_text, test=test)
 
 # Send message to grp
-def send_msg(text):
-    group.send(text)
+def send_msg(text, test=True):
+    if not test:
+        production_group.send(text)
+    else:
+        test_group.send(text)
 
 # Send image to grp
 # TODO: set a timeout
-def send_img(url):
-    img_path = "img_to_send.jpg"
-    download_img(url, img_path)
-    group.send_image(img_path)
-    os.remove(img_path)
+# def send_img(url):
+#     img_path = "img_to_send.jpg"
+#     download_img(url, img_path)
+#     production_group.send_image(img_path)
+#     os.remove(img_path)
 
 # Downloads an image from url and store at path
 def download_img(url, path):
@@ -102,7 +110,7 @@ def handle_msg(msg):
         wid = int(searchweibo_match.groups()[0])
         weibo = get_weibo_with_wid(wid)
         if weibo:
-            send_weibo(weibo)
+            send_weibo(weibo, test=False)
         return
 
     randomweibo_pattern = re.compile("^ *random(?:weibo)? *$")
@@ -110,7 +118,7 @@ def handle_msg(msg):
     if randomweibo_match:
         weibo = get_random_weibo()
         if weibo:
-            send_weibo(weibo)
+            send_weibo(weibo, test=False)
         return
         
 ##################### End of handle commands ####################
