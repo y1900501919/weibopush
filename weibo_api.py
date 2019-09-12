@@ -54,7 +54,7 @@ def process_status(status):
     formatted_timestr = datetime.strftime(created_timestamp, '%Y/%m/%d, %a, %H:%M:%S')
 
     msg_body = formatted_timestr + '\n' + poster_username + '\n' + content + '\n' + user_link
-    img_urls = [x['thumbnail_pic'].replace('thumbnail', 'middle') for x in status['pic_urls']]
+    img_urls = [x['thumbnail_pic'].replace('thumbnail', 'large') for x in status['pic_urls']]
 
     result = dict()
     result['msg_body'] = msg_body

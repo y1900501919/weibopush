@@ -82,7 +82,6 @@ def send_weibo(status, wid=None):
     status_text = status['msg_body'] + weibo_id_str
     img_urls = status['img_urls']
     send_msg(status_text)
-    _ = [send_img(x) for x in img_urls]
 
 # Send message to grp
 def send_msg(text):
