@@ -11,6 +11,8 @@ from wxpy import Bot, ensure_one, embed
 from weibo_api import get_timeline, process_status
 from db import create_weibo_if_not_exists, get_weibo_with_wid, get_random_weibo
 
+TEST = False
+
 # Init wechat bot
 bot = Bot(console_qr=True)
 bot.messages.max_history = 1000
@@ -55,24 +57,24 @@ def job_function():
     for status in processed_statuses:
         exists, wid = create_weibo_if_not_exists(status) # Saves to db if not exist
         if not exists:
-            send_weibo(status, wid, test=False)
+            send_weibo(status, wid)
 
 
 
 sched.add_cron_job(job_function, minute='*/5')
 
 # Sends a weibo to group
-def send_weibo(status, wid=None, test=True):
+def send_weibo(status, wid=None):
     if not wid:
         wid = status.get('id', None)
     weibo_id_str = '' if not wid else ('\nWeibo ID: ' + str(wid))
     status_text = status['msg_body'] + weibo_id_str
     img_urls = status['img_urls']
-    send_msg(status_text, test=test)
+    send_msg(status_text)
 
 # Send message to grp
-def send_msg(text, test=True):
-    if test:
+def send_msg(text):
+    if TEST:
         test_group.send(text)
     else:
         production_group.send(text)
@@ -109,7 +111,7 @@ def handle_msg(msg):
         wid = int(searchweibo_match.groups()[0])
         weibo = get_weibo_with_wid(wid)
         if weibo:
-            send_weibo(weibo, test=False)
+            send_weibo(weibo)
         return
 
     randomweibo_pattern = re.compile("^ *random(?:weibo)? *$", re.IGNORECASE)
@@ -117,7 +119,7 @@ def handle_msg(msg):
     if randomweibo_match:
         weibo = get_random_weibo()
         if weibo:
-            send_weibo(weibo, test=False)
+            send_weibo(weibo)
         return
 
     roll_pattern = re.compile("^ *roll(?: +(\d+))?(?: +(\d+))?(?: +(\d+))? *$", re.IGNORECASE)
@@ -135,13 +137,13 @@ def handle_msg(msg):
             reply = roll(0, 100)
         
         if reply:
-            send_msg(reply, test=False)
+            send_msg(reply)
 
-    roll_answer_pattern = re.compile("^ *roll(?: +(?:\w+))((?: +(?:\w+))+) *$", re.IGNORECASE|re.MULTILINE)
+    roll_answer_pattern = re.compile("^ *roll(?: +(?:[\w？\\?]+))((?: +(?:\w+))+) *$", re.IGNORECASE|re.MULTILINE|re.UNICODE)
     roll_answer_match = roll_answer_pattern.match(msg_content)
     if roll_answer_match:
         answers = roll_answer_match.groups()[0].strip().split(' ')
-        send_msg(roll_answer(answers), test=False)
+        send_msg(roll_answer(answers))
 
 
 def roll(a, b, n=1):
