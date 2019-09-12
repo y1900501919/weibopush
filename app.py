@@ -49,7 +49,7 @@ sched.start()
 
 
 # Runs once per 5 minutes, get the statuses posted in past 5 minutes and send to grp
-def job_function():
+def get_new_status():
     statuses_to_send = get_timeline()
     if not statuses_to_send:
         return
@@ -61,7 +61,7 @@ def job_function():
 
 
 
-sched.add_cron_job(job_function, minute='*/5')
+sched.add_cron_job(get_new_status, minute='*/5')
 
 # Sends a weibo to group
 def send_weibo(status, wid=None):
