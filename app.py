@@ -102,10 +102,8 @@ def handle_msg(msg):
     msg_content = msg.text
     if not msg_content:
         return
-    
-    msg_content = msg_content.lower()
 
-    searchweibo_pattern = re.compile("^ *search(?:weibo)? +(\\d+) *$")
+    searchweibo_pattern = re.compile("^ *search(?:weibo)? +(\\d+) *$", re.IGNORECASE)
     searchweibo_match = searchweibo_pattern.match(msg_content)
     if searchweibo_match:
         wid = int(searchweibo_match.groups()[0])
@@ -114,7 +112,7 @@ def handle_msg(msg):
             send_weibo(weibo, test=False)
         return
 
-    randomweibo_pattern = re.compile("^ *random(?:weibo)? *$")
+    randomweibo_pattern = re.compile("^ *random(?:weibo)? *$", re.IGNORECASE)
     randomweibo_match = randomweibo_pattern.match(msg_content)
     if randomweibo_match:
         weibo = get_random_weibo()
@@ -122,7 +120,7 @@ def handle_msg(msg):
             send_weibo(weibo, test=False)
         return
 
-    roll_pattern = re.compile("^ *roll(?: +(\d+))?(?: +(\d+))?(?: +(\d+))? *$")
+    roll_pattern = re.compile("^ *roll(?: +(\d+))?(?: +(\d+))?(?: +(\d+))? *$", re.IGNORECASE)
     roll_match = roll_pattern.match(msg_content)
     if roll_match:
         grps = roll_match.groups()
@@ -139,6 +137,12 @@ def handle_msg(msg):
         if reply:
             send_msg(reply, test=False)
 
+    roll_answer_pattern = re.compile("^ *roll(?: +(?:\w+))((?: +(?:\w+))+) *$", re.IGNORECASE|re.MULTILINE)
+    roll_answer_match = roll_answer_pattern.match(msg_content)
+    if roll_answer_match:
+        answers = roll_answer_match.groups()[0].strip().split(' ')
+        send_msg(roll_answer(answers), test=False)
+
 
 def roll(a, b, n=1):
     if a > b:
@@ -148,6 +152,10 @@ def roll(a, b, n=1):
         return "Maximum roll count is 20, your input is {}".format(n)
 
     return ', '.join([str(random.randint(a, b)) for _ in range(n)])
+
+def roll_answer(answers):
+    return random.choice(answers).strip()
+
         
 ##################### End of handle commands ####################
 
