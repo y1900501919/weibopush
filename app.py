@@ -96,7 +96,7 @@ def handle_msg(msg):
     
     msg_content = msg_content.lower()
 
-    searchweibo_pattern = re.compile("^ *searchweibo +(\\d+) *$")
+    searchweibo_pattern = re.compile("^ *search(?:weibo)? +(\\d+) *$")
     searchweibo_match = searchweibo_pattern.match(msg_content)
     if searchweibo_match:
         wid = int(searchweibo_match.groups()[0])
@@ -105,7 +105,7 @@ def handle_msg(msg):
             send_weibo(weibo)
         return
 
-    randomweibo_pattern = re.compile("^ *randomweibo *$")
+    randomweibo_pattern = re.compile("^ *random(?:weibo) *$")
     randomweibo_match = randomweibo_pattern.match(msg_content)
     if randomweibo_match:
         weibo = get_random_weibo()
