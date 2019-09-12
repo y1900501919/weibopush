@@ -169,8 +169,8 @@ def roll_answer(answers):
 def niwota(msg):
     if '你' in msg or '我' in msg or '他' in msg:
         msg = msg.replace('他', '<#T##>')
-        msg = msg.replace('我', '你')
         msg = msg.replace('你', '他')
+        msg = msg.replace('我', '你')
         msg = msg.replace('<#T##>', '我')
     return msg
 
