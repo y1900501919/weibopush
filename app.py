@@ -97,7 +97,7 @@ def download_img(url, path):
 
 
 ######################## Handle commands ########################
-@bot.register(group, except_self=False)
+@bot.register([production_group, test_group], except_self=False)
 def handle_msg(msg):
     msg_content = msg.text
     if not msg_content:
