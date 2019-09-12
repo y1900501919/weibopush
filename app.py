@@ -105,7 +105,7 @@ def handle_msg(msg):
             send_weibo(weibo)
         return
 
-    randomweibo_pattern = re.compile("^ *random(?:weibo) *$")
+    randomweibo_pattern = re.compile("^ *random(?:weibo)? *$")
     randomweibo_match = randomweibo_pattern.match(msg_content)
     if randomweibo_match:
         weibo = get_random_weibo()
