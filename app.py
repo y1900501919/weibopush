@@ -145,6 +145,14 @@ def handle_msg(msg):
         answers = roll_answer_match.groups()[0].strip().split(' ')
         send_msg(roll_answer(answers))
 
+    
+    # 你我他复读机，放最后
+    if random.random() >= 0.9:
+        niwotarepeat = niwota(msg_content)
+        if niwotarepeat:
+            send_msg(niwotarepeat)
+
+
 
 def roll(a, b, n=1):
     if a > b:
@@ -157,6 +165,14 @@ def roll(a, b, n=1):
 
 def roll_answer(answers):
     return random.choice(answers).strip()
+
+def niwota(msg):
+    if '你' in msg or '我' in msg or '他' in msg:
+        msg = msg.replace('他', '<#T##>')
+        msg = msg.replace('我', '你')
+        msg = msg.replace('你', '他')
+        msg = msg.replace('<#T##>', '我')
+    return msg
 
         
 ##################### End of handle commands ####################
