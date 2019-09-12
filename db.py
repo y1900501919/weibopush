@@ -13,7 +13,7 @@ def dict_factory(cursor, row):
 conn.row_factory = dict_factory
 
 
-# Creates a weibo in DB if not exists, returns its ID
+# Creates a weibo in DB if not exists, returns exist status and its ID
 def create_weibo_if_not_exists(weibo):
     msg_body = weibo['msg_body']
     post_uid = weibo['post_uid']
@@ -25,12 +25,12 @@ def create_weibo_if_not_exists(weibo):
     query_sql = 'select * from weibos where weibo_id=?'
     cur.execute(query_sql, (weibo_id,))
     rows = cur.fetchall()
-    if rows: return rows[0]['id']
+    if rows: return True, rows[0]['id']
 
     insert_sql = 'insert into weibos(msg_body, post_uid, weibo_id, img_urls) values (?,?,?,?)'
     cur.execute(insert_sql, (msg_body, post_uid, weibo_id, img_urls,))
     conn.commit()
-    return cur.lastrowid
+    return False, cur.lastrowid
 
 
 def get_weibo_with_wid(wid):

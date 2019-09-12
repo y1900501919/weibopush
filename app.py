@@ -15,8 +15,8 @@ bot = Bot(console_qr=True)
 bot.messages.max_history = 1000
 
 # Ensure wechat group exists in list (Can only get by name)
-# required_group = 'testtest'
-required_group = '姐(shǎ)夫(bī)观察小组'
+required_group = 'testtest'
+# required_group = '姐(shǎ)夫(bī)观察小组'
 while True:
     done = True
     if not bot.groups().search(required_group):
@@ -40,20 +40,20 @@ print("Starting cron job...")
 sched.start()
 
 
-# Runs once per 30 minutes, get the statuses posted in past 30 minutes and send to grp
+# Runs once per 5 minutes, get the statuses posted in past 5 minutes and send to grp
 def job_function():
-    pass
-    # statuses_to_send = get_timeline()
-    # if not statuses_to_send:
-    #     return
-    # processed_statuses = [process_status(status) for status in statuses_to_send]
-    # for status in processed_statuses:
-    #     wid = create_weibo_if_not_exists(status) # Saves to db if not exist
-    #     send_weibo(status, wid)
+    statuses_to_send = get_timeline()
+    if not statuses_to_send:
+        return
+    processed_statuses = [process_status(status) for status in statuses_to_send]
+    for status in processed_statuses:
+        exists, wid = create_weibo_if_not_exists(status) # Saves to db if not exist
+        if not exists:
+            send_weibo(status, wid)
 
 
 
-sched.add_cron_job(job_function, minute='*/30')
+sched.add_cron_job(job_function, minute='*/5')
 
 # Sends a weibo to group
 def send_weibo(status, wid=None):
