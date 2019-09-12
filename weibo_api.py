@@ -14,10 +14,10 @@ REQUEST_URL = "https://api.weibo.com/2/statuses/home_timeline.json"
 WEIBOLINK = "https://m.weibo.cn/status/"
 
 
-# Get statuses in past 5 minutes
+# Get statuses in past 30 minutes
 def get_timeline():
     url = REQUEST_URL
-    get_params = {"access_token": ACCESS_TOKEN, "count": 100}
+    get_params = {"access_token": ACCESS_TOKEN}
     response = requests.get(url, params=get_params)
     if (response.status_code != 200):
         # TODO: handle
@@ -35,10 +35,11 @@ def get_timeline():
         # TODO: Temporary Solution!!!
         time_diff = time.time() - created_secs + 8 * 3600
         
-        if (time_diff <= 300):
+        if (time_diff <= 1800):
             statuses_new.append(status)
         else:
             break
+        # statuses_new.append(status)
     
     return statuses_new
 
