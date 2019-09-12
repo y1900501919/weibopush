@@ -4,6 +4,7 @@ import shutil
 import time
 import requests
 import re
+import random
 from apscheduler.scheduler import Scheduler
 from wxpy import Bot, ensure_one, embed
 
@@ -120,6 +121,25 @@ def handle_msg(msg):
         if weibo:
             send_weibo(weibo, test=False)
         return
+
+    roll_pattern = re.compile("^ *roll(?: +(\d+))?(?: +(\d+))?(?: +(\d+))? *$")
+    roll_match = roll_pattern.match(msg_content)
+    if roll_match:
+        grps = roll_match.grps()
+        reply = None
+        if grps[2]:
+            reply = roll(int(grps[0]), int(grps[1]), n=int(grps[2]))
+        elif grps[1]:
+            reply = roll(int(grps[0]), int(grps[1]))
+        elif grps[0]:
+            reply = roll(0, int(grps[0]))
+        else:
+            reply = roll(0, 100)
+        send_msg(reply, test=True)
+
+
+def roll(a, b, n=1):
+    return ', '.join([str(random.randint(a, b)) for _ in range(n)])
         
 ##################### End of handle commands ####################
 
