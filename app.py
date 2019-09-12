@@ -33,34 +33,6 @@ while True:
 # Group
 group = ensure_one(bot.groups().search(required_group))
 
-######################## Handle commands ########################
-@bot.register(group, except_self=False)
-def handle_msg(msg):
-    msg_content = msg.text
-    if not msg_content:
-        return
-    
-    msg_content = msg_content.lower()
-    
-    searchweibo_pattern = re.compile("^ *searchweibo +(\\d+) *$")
-    searchweibo_match = searchweibo_pattern.match(msg_content)
-    if searchweibo_match:
-        wid = int(searchweibo_match.groups()[0])
-        weibo = get_weibo_with_wid(wid)
-        if weibo:
-            send_weibo(weibo)
-        return
-
-    randomweibo_pattern = re.compile("^ *randomweibo *$")
-    randomweibo_match = randomweibo_pattern.match(msg_content)
-    if searchweibo_match:
-        weibo = get_random_weibo()
-        if weibo:
-            send_weibo(weibo)
-        return
-        
-##################### End of handle commands ####################
-
 
 # Crontab
 sched = Scheduler()
@@ -70,13 +42,14 @@ sched.start()
 
 # Runs once per 30 minutes, get the statuses posted in past 30 minutes and send to grp
 def job_function():
-    statuses_to_send = get_timeline()
-    if not statuses_to_send:
-        return
-    processed_statuses = [process_status(status) for status in statuses_to_send]
-    for status in processed_statuses:
-        wid = create_weibo_if_not_exists(status) # Saves to db if not exist
-        send_weibo(status, wid)
+    pass
+    # statuses_to_send = get_timeline()
+    # if not statuses_to_send:
+    #     return
+    # processed_statuses = [process_status(status) for status in statuses_to_send]
+    # for status in processed_statuses:
+    #     wid = create_weibo_if_not_exists(status) # Saves to db if not exist
+    #     send_weibo(status, wid)
 
 
 
@@ -110,6 +83,37 @@ def download_img(url, path):
         with open(path, 'wb') as f:
             response.raw.decode_content = True
             shutil.copyfileobj(response.raw, f)
+
+
+
+
+######################## Handle commands ########################
+@bot.register(group, except_self=False)
+def handle_msg(msg):
+    msg_content = msg.text
+    if not msg_content:
+        return
+    
+    msg_content = msg_content.lower()
+    
+    searchweibo_pattern = re.compile("^ *searchweibo +(\\d+) *$")
+    searchweibo_match = searchweibo_pattern.match(msg_content)
+    if searchweibo_match:
+        wid = int(searchweibo_match.groups()[0])
+        weibo = get_weibo_with_wid(wid)
+        if weibo:
+            send_weibo(weibo)
+        return
+
+    randomweibo_pattern = re.compile("^ *randomweibo *$")
+    randomweibo_match = randomweibo_pattern.match(msg_content)
+    if searchweibo_match:
+        weibo = get_random_weibo()
+        if weibo:
+            send_weibo(weibo)
+        return
+        
+##################### End of handle commands ####################
 
 
 # Shutdown crontab when web service stops
