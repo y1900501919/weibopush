@@ -72,10 +72,10 @@ def send_weibo(status, wid=None, test=True):
 
 # Send message to grp
 def send_msg(text, test=True):
-    if not test:
-        production_group.send(text)
-    else:
+    if test:
         test_group.send(text)
+    else:
+        production_group.send(text)
 
 # Send image to grp
 # TODO: set a timeout
@@ -125,7 +125,7 @@ def handle_msg(msg):
     roll_pattern = re.compile("^ *roll(?: +(\d+))?(?: +(\d+))?(?: +(\d+))? *$")
     roll_match = roll_pattern.match(msg_content)
     if roll_match:
-        grps = roll_match.grps()
+        grps = roll_match.groups()
         reply = None
         if grps[2]:
             reply = roll(int(grps[0]), int(grps[1]), n=int(grps[2]))
@@ -135,10 +135,18 @@ def handle_msg(msg):
             reply = roll(0, int(grps[0]))
         else:
             reply = roll(0, 100)
-        send_msg(reply, test=True)
+        
+        if reply:
+            send_msg(reply, test=False)
 
 
 def roll(a, b, n=1):
+    if a > b:
+        a, b = b, a
+
+    if n > 20:
+        return "Maximum roll count is 20, your input is {}".format(n)
+
     return ', '.join([str(random.randint(a, b)) for _ in range(n)])
         
 ##################### End of handle commands ####################
