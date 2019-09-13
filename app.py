@@ -12,6 +12,7 @@ from weibo_api import get_timeline, process_status
 from db import create_weibo_if_not_exists, get_weibo_with_wid, get_random_weibo, get_weibo_feedback, update_weibo_feedback, save_weibo_feedback, get_all_ratings
 
 TEST = False
+REPEAT_RATE = 0.15
 
 # Init wechat bot
 bot = Bot(console_qr=True)
@@ -32,7 +33,7 @@ while True:
             done = False
             print("Not yet finished loading {}, try sending a message in the {}.".format(required_chat, required_chat))
             break
-    
+        
     if not done:
         time.sleep(5)
     else:
@@ -116,7 +117,8 @@ def download_img(url, path):
 def handle_msg(msg):
     chat = msg.chat
     msg_content = msg.text
-    sender_puid = msg.sender.puid
+    sender = msg.sender
+    sender_puid = sender.puid
     if not msg_content:
         return
 
@@ -179,10 +181,31 @@ def handle_msg(msg):
         return
 
 
+    ###########################  Sudo ###########################
+    sudo_pattern = re.compile(" *sudo (.+) *$", re.IGNORECASE)
+    sudo_match = sudo_pattern.match(msg_content)
+    sudo_msg = ''
+    if sudo_match:
+        if sender != bot:
+            send_msg('请发送‘好爸爸’来获取sudo权限。', chat)
+            return
+        sudo_msg = sudo_match.groups()[0]
+        
+
+    set_repeat_rate_pattern = re.compile("^ *set repeat rate (0\\.\d+) *$", re.IGNORECASE)
+    set_repeat_rate_match = set_repeat_rate_pattern.match(sudo_msg)
+    if set_repeat_rate_match:
+        set_repeat_rate(float(set_repeat_rate_match.groups[0]))
+        print(REPEAT_RATE)
+        return
+
+    ######################## End of Sudo ########################
+
+
     # 你我他复读机，放最后
 
     has_special, msg_content = replace_special(msg_content)
-    if random.random() >= 0.85:
+    if random.random() <= REPEAT_RATE:
         niwotarepeat = niwota(msg_content)
         if niwotarepeat:
             send_msg(niwotarepeat, chat)
@@ -194,7 +217,9 @@ def handle_msg(msg):
     
 
 
-
+def set_repeat_rate(new_rate):
+    global REPEAT_RATE
+    REPEAT_RATE = min(max(0, new_rate), 0.75)
 
 def roll(a, b, n=1):
     if a > b:
@@ -237,6 +262,8 @@ def replace_special(msg_content):
         return True, msg_content.replace('白', 'pek')
     if '头神' in msg_content:
         return True, 'tsnb' + random.randint(0, 30) * '!'
+    if msg_content == '好爸爸':
+        return True, '好儿子'
     return False, msg_content
         
 ##################### End of handle commands ####################
