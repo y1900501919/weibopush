@@ -76,3 +76,11 @@ def save_weibo_feedback(wid, rating, sender_puid):
     cur.execute(update_sql, (wid, rating, sender_puid,))
 
     conn.commit()
+
+def get_all_ratings(wid):
+    cur = conn.cursor()
+
+    query_sql = 'select * from weibo_feedbacks where wid=?'
+    cur.execute(query_sql, (wid,))
+    rows = cur.fetchall()
+    return rows

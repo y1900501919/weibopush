@@ -9,7 +9,7 @@ from apscheduler.scheduler import Scheduler
 from wxpy import Bot, ensure_one, embed
 
 from weibo_api import get_timeline, process_status
-from db import create_weibo_if_not_exists, get_weibo_with_wid, get_random_weibo, get_weibo_feedback, update_weibo_feedback, save_weibo_feedback
+from db import create_weibo_if_not_exists, get_weibo_with_wid, get_random_weibo, get_weibo_feedback, update_weibo_feedback, save_weibo_feedback, get_all_ratings
 
 TEST = True
 
@@ -72,7 +72,16 @@ def send_weibo(status, chat=None, wid=None):
     if not wid:
         wid = status.get('id', None)
     weibo_id_str = '' if not wid else ('\nWeibo ID: ' + str(wid))
-    status_text = status['msg_body'] + weibo_id_str
+
+    rating_str = ''
+    if wid:
+        ratings = get_all_ratings(wid)
+        if ratings:
+            rating_str = '\nRating: ' + sum([x['rating'] for x in ratings]) * 1.0 / len(ratings)
+        else:
+            rating_str = '\n这条微博还没有评分，快来rate {} [0-5]成为第一个评分的人吧'.format(wid)
+
+    status_text = status['msg_body'] + weibo_id_str + rating_str
     img_urls = status['img_urls']
     send_msg(status_text, chat)
 
