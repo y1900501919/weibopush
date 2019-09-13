@@ -22,8 +22,8 @@ bot.messages.max_history = 1000
 # required_group = 'testtest'
 production_group_name = '姐(shǎ)夫(bī)观察小组'
 test_group_name = 'testtest'
-myself_name = 'bottest'
-required_chats = [production_group_name, test_group_name, myself_name]
+my_test_group_name = 'bottest'
+required_chats = [production_group_name, test_group_name, my_test_group_name]
 
 while True:
     done = True
@@ -43,7 +43,7 @@ while True:
 # Chats
 production_group = ensure_one(bot.groups().search(production_group_name))
 test_group = ensure_one(bot.groups().search(test_group_name))
-myself = ensure_one(bot.groups().search(myself_name))
+my_test_group = ensure_one(bot.groups().search(my_test_group_name))
 
 
 # Crontab
@@ -88,7 +88,7 @@ def send_weibo(status, chat=None, wid=None):
 # Send message to grp
 def send_msg(text, chat=None):
     if not chat:
-        myself.send(text)
+        my_test_group.send(text)
     else:
         chat.send(text)
 
@@ -112,7 +112,7 @@ def download_img(url, path):
 
 
 ######################## Handle commands ########################
-@bot.register([production_group, test_group, myself], except_self=False)
+@bot.register([production_group, test_group, my_test_group], except_self=False)
 def handle_msg(msg):
     chat = msg.chat
     msg_content = msg.text
@@ -121,7 +121,7 @@ def handle_msg(msg):
         return
 
     if TEST:
-        if chat != myself:
+        if chat != my_test_group:
             send_msg("Testing testing", chat)
             return
 
@@ -179,9 +179,7 @@ def handle_msg(msg):
         return
 
 
-    # 你我他复读机，放最后，不复读自己
-    if chat == myself:
-        return
+    # 你我他复读机，放最后
 
     has_pek, msg_content = replace_pek(msg_content)
     if random.random() >= 0.85:
