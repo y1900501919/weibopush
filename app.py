@@ -181,16 +181,18 @@ def handle_msg(msg):
 
     # 你我他复读机，放最后
 
-    has_pek, msg_content = replace_pek(msg_content)
+    has_special, msg_content = replace_special(msg_content)
     if random.random() >= 0.85:
         niwotarepeat = niwota(msg_content)
         if niwotarepeat:
             send_msg(niwotarepeat, chat)
+            return
 
-    if has_pek:
+    if has_special:
         send_msg(msg_content, chat)
-        
         return
+    
+
 
 
 
@@ -228,11 +230,13 @@ def rate(wid, rating, sender_puid):
         return "Your rating for weibo ID: {} is: {}".format(wid, rating)
 
 
-def replace_pek(msg_content):
+def replace_special(msg_content):
     if '老白' in msg_content:
         return True, msg_content.replace('老白', random.choice(['PekTohNee', 'Pek Pek', 'Pekky']))
     if '白' in msg_content:
         return True, msg_content.replace('白', 'pek')
+    if '头神' in msg_content:
+        return True, 'tsnb' + random.randint(0, 30) * '!'
     return False, msg_content
         
 ##################### End of handle commands ####################
