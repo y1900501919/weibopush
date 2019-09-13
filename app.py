@@ -198,11 +198,10 @@ def handle_msg(msg):
         sudo_msg = sudo_match.groups()[0]
         
 
-    set_repeat_rate_pattern = re.compile("^ *set repeat rate (0\\.\d+) *$", re.IGNORECASE)
+    set_repeat_rate_pattern = re.compile("^ *set repeat rate (0(?:\\.\d+)?) *$", re.IGNORECASE)
     set_repeat_rate_match = set_repeat_rate_pattern.match(sudo_msg)
     if set_repeat_rate_match:
-        set_repeat_rate(float(set_repeat_rate_match.groups[0]))
-        print(REPEAT_RATE)
+        set_repeat_rate(float(set_repeat_rate_match.groups()[0]))
         return
 
     ######################## End of Sudo ########################
