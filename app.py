@@ -229,6 +229,8 @@ def rate(wid, rating, sender_puid):
 
 
 def replace_pek(msg_content):
+    if '老白' in msg_content:
+        return True, msg_content.replace('老白', random.choice(['PekTohNee', 'Pek Pek', 'Pekky']))
     if '白' in msg_content:
         return True, msg_content.replace('白', 'pek')
     return False, msg_content
