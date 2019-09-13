@@ -170,7 +170,10 @@ def handle_msg(msg):
         return
 
 
-    # 你我他复读机，放最后
+    # 你我他复读机，放最后，不复读自己
+    if chat == myself:
+        return
+
     if random.random() >= 0.9:
         niwotarepeat = niwota(msg_content)
         if niwotarepeat:
