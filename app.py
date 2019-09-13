@@ -24,6 +24,7 @@ bot.messages.max_history = 1000
 production_group_name = '姐(shǎ)夫(bī)观察小组'
 test_group_name = 'testtest'
 my_test_group_name = 'bottest'
+myself_name = 'Des'
 required_chats = [production_group_name, test_group_name, my_test_group_name]
 
 while True:
@@ -33,6 +34,10 @@ while True:
             done = False
             print("Not yet finished loading {}, try sending a message in the {}.".format(required_chat, required_chat))
             break
+
+    if not bot.friends().search(myself_name):
+        done = False;
+        print("Not yet finished loading Des, try sending a message to Des.")
         
     if not done:
         time.sleep(5)
@@ -45,6 +50,7 @@ while True:
 production_group = ensure_one(bot.groups().search(production_group_name))
 test_group = ensure_one(bot.groups().search(test_group_name))
 my_test_group = ensure_one(bot.groups().search(my_test_group_name))
+myself = ensure_one(bot.friends().search(myself_name))
 
 
 # Crontab
@@ -186,7 +192,7 @@ def handle_msg(msg):
     sudo_match = sudo_pattern.match(msg_content)
     sudo_msg = ''
     if sudo_match:
-        if sender != bot:
+        if sender != myself:
             send_msg('请发送‘好爸爸’来获取sudo权限。', chat)
             return
         sudo_msg = sudo_match.groups()[0]
