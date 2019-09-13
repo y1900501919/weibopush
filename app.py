@@ -183,10 +183,14 @@ def handle_msg(msg):
     if chat == myself:
         return
 
+    has_pek, msg_content = replace_pek(msg_content)
     if random.random() >= 0.85:
         niwotarepeat = niwota(msg_content)
         if niwotarepeat:
             send_msg(niwotarepeat, chat)
+
+    if has_pek:
+        send_msg(msg_content, chat)
         
         return
 
@@ -225,6 +229,11 @@ def rate(wid, rating, sender_puid):
         save_weibo_feedback(wid, rating, sender_puid)
         return "Your rating for weibo ID: {} is: {}".format(wid, rating)
 
+
+def replace_pek(msg_content):
+    if '白' in msg_content:
+        return True, msg_content.replace('白', 'pek')
+    return False, msg_content
         
 ##################### End of handle commands ####################
 
