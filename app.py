@@ -77,9 +77,9 @@ def send_weibo(status, chat=None, wid=None):
     if wid:
         ratings = get_all_ratings(wid)
         if ratings:
-            rating_str = '\nRating: ' + sum([x['rating'] for x in ratings]) * 1.0 / len(ratings)
+            rating_str = '\nRating: {}'.format(sum([x['rating'] for x in ratings]) * 1.0 / len(ratings))
         else:
-            rating_str = '\n这条微博还没有评分，快来rate {} [0-5]成为第一个评分的人吧'.format(wid)
+            rating_str = '\n这条微博还没有评分，快来"rate {} [0-5]"成为第一个评分的人吧¿'.format(wid)
 
     status_text = status['msg_body'] + weibo_id_str + rating_str
     img_urls = status['img_urls']
