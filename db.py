@@ -43,6 +43,16 @@ def get_weibo_with_wid(wid):
     return None
 
 
+def get_weibo_feedback(wid, sender):
+    cur = conn.cursor()
+
+    query_sql = 'select * from weibo_feedbacks where wid=? and feedback_user_id=?'
+    cur.execute(query_sql, (wid, sender,))
+    rows = cur.fetchall()
+    if rows: return rows[0]
+    return None
+
+
 def get_random_weibo():
     cur = conn.cursor()
     query_sql = 'select * FROM weibos order by RANDOM() limit 1'
@@ -50,3 +60,19 @@ def get_random_weibo():
     rows = cur.fetchall()
     if rows: return rows[0]
     return None
+
+
+def update_weibo_feedback(wid, rating, sender_puid):
+    cur = conn.cursor()
+    update_sql = 'update weibo_feedbacks set rating=? where wid=? and feedback_user_id=?'
+    cur.execute(update_sql, (rating, wid, sender_puid,))
+
+    conn.commit()
+
+
+def save_weibo_feedback(wid, rating, sender_puid):
+    cur = conn.cursor()
+    update_sql = 'insert into weibo_feedbacks(wid, rating, feedback_user_id) values (?,?,?)'
+    cur.execute(update_sql, (wid, rating, sender_puid,))
+
+    conn.commit()
