@@ -167,6 +167,7 @@ def handle_msg(msg):
         rating = int(rate_score_match.groups()[1])
         reply = rate(wid, rating, sender_puid)
         send_msg(reply, chat)
+        return
 
 
     # 你我他复读机，放最后
