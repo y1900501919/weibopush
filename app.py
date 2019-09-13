@@ -11,7 +11,7 @@ from wxpy import Bot, ensure_one, embed
 from weibo_api import get_timeline, process_status
 from db import create_weibo_if_not_exists, get_weibo_with_wid, get_random_weibo, get_weibo_feedback, update_weibo_feedback, save_weibo_feedback, get_all_ratings
 
-TEST = True
+TEST = False
 
 # Init wechat bot
 bot = Bot(console_qr=True)
