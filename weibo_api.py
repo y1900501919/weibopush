@@ -21,7 +21,7 @@ def get_timeline():
     url = REQUEST_URL
     response_text = None
     for i, access_token in enumerate(ACCESS_TOKENS):
-        get_params = {"access_token": access_token}
+        get_params = {"access_token": access_token, "count": 100}
         response = requests.get(url, params=get_params)
         if (response.status_code == 200):
             print("Using token {}: {} to query".format(i, access_token))

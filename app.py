@@ -202,6 +202,7 @@ def handle_msg(msg):
     set_repeat_rate_match = set_repeat_rate_pattern.match(sudo_msg)
     if set_repeat_rate_match:
         set_repeat_rate(float(set_repeat_rate_match.groups()[0]))
+        send_msg('复读概率已设置为{}'.format(REPEAT_RATE), chat)
         return
 
     ######################## End of Sudo ########################
