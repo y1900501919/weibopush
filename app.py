@@ -174,7 +174,7 @@ def handle_msg(msg):
     if chat == myself:
         return
 
-    if random.random() >= 0.9:
+    if random.random() >= 0.85:
         niwotarepeat = niwota(msg_content)
         if niwotarepeat:
             send_msg(niwotarepeat, chat)
