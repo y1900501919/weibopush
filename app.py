@@ -61,7 +61,7 @@ def get_new_status():
     for status in processed_statuses:
         exists, wid = create_weibo_if_not_exists(status) # Saves to db if not exist
         if not exists:
-            send_weibo(status, wid)
+            send_weibo(status, production_group, wid)
 
 
 
