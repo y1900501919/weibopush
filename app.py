@@ -5,11 +5,22 @@ import time
 import requests
 import re
 import random
+import emojis
 from apscheduler.scheduler import Scheduler
 from wxpy import Bot, ensure_one, embed
 
 from weibo_api import get_timeline, process_status
-from db import create_weibo_if_not_exists, get_weibo_with_wid, get_random_weibo, get_weibo_feedback, update_weibo_feedback, save_weibo_feedback, get_all_ratings
+from db import (
+    create_weibo_if_not_exists, 
+    get_weibo_with_wid, 
+    get_random_weibo, 
+    get_weibo_feedback, 
+    update_weibo_feedback_rating, 
+    update_weibo_feedback_emo,
+    save_weibo_feedback_rating, 
+    save_weibo_feedback_emo,
+    get_all_ratings
+)
 
 TEST = False
 REPEAT_RATE = 0.15
@@ -36,7 +47,7 @@ while True:
             break
 
     if not bot.friends().search(myself_name):
-        done = False;
+        done = False
         print("Not yet finished loading Des, try sending a message to Des.")
         
     if not done:
@@ -59,7 +70,7 @@ print("Starting cron job...")
 sched.start()
 
 
-# Runs once per 5 minutes, get the statuses posted in past 5 minutes and send to grp
+# Run once per 5 minutes, get the statuses posted in past 5 minutes and send to grp
 def get_new_status():
     statuses_to_send = get_timeline()
     if not statuses_to_send:
@@ -185,6 +196,17 @@ def handle_msg(msg):
         reply = rate(wid, rating, sender_puid)
         send_msg(reply, chat)
         return
+    
+    
+    # This emo matching is not tested 
+    emo_pattern = re.compile("^ *emo +(\d+) +([\U00010000-\U0010ffff]) *$", re.IGNORECASE, flags=re.UNICODE)
+    emo_match = emo_pattern.match(msg_content)
+    if emo_match:
+        wid = int(emo_match.groups()[0])
+        emo = int(emo_match.groups()[1])
+        reply = emo_rate(wid, emo, sender_puid)
+        send_msg(reply, chat)
+        return 
 
 
     ###########################  Sudo ###########################
@@ -254,11 +276,26 @@ def rate(wid, rating, sender_puid):
     existing_feedback = get_weibo_feedback(wid, sender_puid)
     if (existing_feedback):
         existing_rating = existing_feedback['rating']
-        update_weibo_feedback(wid, rating, sender_puid)
+        update_weibo_feedback_rating(wid, rating, sender_puid)
         return "Your rating for weibo ID: {} has been changed: {} => {}".format(wid, existing_rating, rating)
     else:
-        save_weibo_feedback(wid, rating, sender_puid)
+        save_weibo_feedback_rating(wid, rating, sender_puid)
         return "Your rating for weibo ID: {} is: {}".format(wid, rating)
+
+
+def emo_rate(wid, emo, sender_puid):
+    weibo = get_weibo_with_wid(wid)
+    if not weibo:
+        return "weibo ID: {} dun have, hwat r u doing ah".format(wid)
+
+    existing_feedback = get_weibo_feedback(wid, sender_puid)
+    if existing_feedback:
+        existing_emo = existing_feedback['emo']
+        update_weibo_feedback_emo(wid, emo, sender_puid)
+        return "Your emo for weibo ID: {} has been changed: {} => {}".format(wid, existing_emo, emo)
+    else:
+        save_weibo_feedback_emo(wid, emo, sender_puid)
+        return "Your emo for weibo ID: {} is: {}".format(wid, emo)
 
 
 def replace_special(msg_content):

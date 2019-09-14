@@ -62,7 +62,7 @@ def get_random_weibo():
     return None
 
 
-def update_weibo_feedback(wid, rating, sender_puid):
+def update_weibo_feedback_rating(wid, rating, sender_puid):
     cur = conn.cursor()
     update_sql = 'update weibo_feedbacks set rating=? where wid=? and feedback_user_id=?'
     cur.execute(update_sql, (rating, wid, sender_puid,))
@@ -70,12 +70,29 @@ def update_weibo_feedback(wid, rating, sender_puid):
     conn.commit()
 
 
-def save_weibo_feedback(wid, rating, sender_puid):
+def update_weibo_feedback_emo(wid, emo, sender_puid):
+    cur = conn.cursor()
+    update_sql = 'update weibo_feedbacks set emo=? where wid=? and feedback_user_id=?'
+    cur.execute(update_sql, (emo, wid, sender_puid,))
+
+    conn.commit()
+
+
+def save_weibo_feedback_rating(wid, rating, sender_puid):
     cur = conn.cursor()
     update_sql = 'insert into weibo_feedbacks(wid, rating, feedback_user_id) values (?,?,?)'
     cur.execute(update_sql, (wid, rating, sender_puid,))
 
     conn.commit()
+
+
+def save_weibo_feedback_emo(wid, emo, sender_puid):
+    cur = conn.cursor()
+    update_sql = 'insert into weibo_feedbacks(wid, emo, feedback_user_id) values (?,?,?)'
+    cur.execute(update_sql, (wid, emo, sender_puid,))
+
+    conn.commit()
+
 
 def get_all_ratings(wid):
     cur = conn.cursor()
