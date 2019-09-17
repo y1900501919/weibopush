@@ -137,10 +137,10 @@ def download_img(url, path):
 
 ######################## Handle commands ########################
 @bot.register([production_group, test_group, my_test_group], except_self=False)
-def handle_msg(msg):
-    chat = msg.chat
-    msg_content = msg.text
-    sender = msg.sender
+def handle_msg(search_results):
+    chat = search_results.chat
+    msg_content = search_results.text
+    sender = search_results.sender
     sender_puid = sender.puid
     if not msg_content:
         return
@@ -170,7 +170,8 @@ def handle_msg(msg):
             if len(weibo_lst) == 1:
                 send_weibo(weibo_lst[0], chat)
             else:
-                msg = "Got these:\n{}".format(' '.join([x['id'] for x in weibo_lst]))
+                search_results = process_search_results(weibo_lst, keywords)
+                send_msg(search_results, chat)
         else:
             send_msg("Dun have weibos with these keywords", chat)
         return
@@ -270,6 +271,19 @@ def search_weibos_with_kw(keywords):
     keywords = [x.strip() for x in keywords]
     return search_weibo(keywords)
 
+def process_search_results(weibo_lst, keywords):
+    result = '{} Results.'.format(len(weibo_lst))
+    for weibo in weibo_lst:
+        wid = weibo['id']
+        content = weibo['msg_body']
+        ctx_length = 4;
+        for keyword in keywords:
+            if keyword not in content: continue
+            idx = content.index(keyword)
+            idx_start = max(idx-ctx_length, 0)
+            idx_end = min(idx+ctx_length+len(keyword), len(content)-1)
+            result += '\n{}: ...'.format(wid) + content[idx_start:idx_end] + '...'
+    return result
 
 def set_repeat_rate(new_rate):
     global REPEAT_RATE
