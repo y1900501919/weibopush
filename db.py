@@ -63,9 +63,10 @@ def get_random_weibo():
 
 def search_weibo(keywords):
     cur = conn.cursor()
-    append_sql = ['msg_body like "?"'] * len(keywords)
+    append_sql = ['msg_body like "%{}%"'.format(keyword) for keyword in keywords]
     query_sql = 'select * from weibos where ' + ' or '.join(append_sql)
-    cur.execute(query_sql, tuple(keywords))
+    import pdb; pdb.set_trace()
+    cur.execute(query_sql)
     rows = cur.fetchall()
     return rows
 
