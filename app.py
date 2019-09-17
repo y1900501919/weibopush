@@ -97,7 +97,7 @@ def send_weibo(status, chat=None, wid=None):
         if ratings:
             rating_str = '\nRating: {}'.format(sum([x['rating'] for x in ratings]) * 1.0 / len(ratings))
         else:
-            rating_str = '\n这条微博还没有评分，快来"rate {} [0-5]"成为第一个评分的人吧¿'.format(wid)
+            rating_str = '\n这条微博还没有评分，快来"rate {} [0-5]"或者"emo {} [emoji]"成为第一个评分的人吧¿'.format(wid, wid)
 
     status_text = status['msg_body'] + weibo_id_str + rating_str
     img_urls = status['img_urls']
@@ -277,7 +277,10 @@ def rate(wid, rating, sender_puid):
     if (existing_feedback):
         existing_rating = existing_feedback['rating']
         update_weibo_feedback_rating(wid, rating, sender_puid)
-        return "Your rating for weibo ID: {} has been changed: {} => {}".format(wid, existing_rating, rating)
+        if existing_rating:
+            return "Your rating for weibo ID: {} has been changed: {} => {}".format(wid, existing_rating, rating)
+        else:
+            return "Your rating for weibo ID: {} is: {}".format(wid, rating)
     else:
         save_weibo_feedback_rating(wid, rating, sender_puid)
         return "Your rating for weibo ID: {} is: {}".format(wid, rating)
@@ -292,7 +295,10 @@ def emo_rate(wid, emo, sender_puid):
     if existing_feedback:
         existing_emo = existing_feedback['emo']
         update_weibo_feedback_emo(wid, emo, sender_puid)
-        return "Your emo for weibo ID: {} has been changed: {} => {}".format(wid, existing_emo, emo)
+        if existing_emo:
+            return "Your emo for weibo ID: {} has been changed: {} => {}".format(wid, existing_emo, emo)
+        else:
+            return "Your emo for weibo ID: {} is: {}".format(wid, emo)
     else:
         save_weibo_feedback_emo(wid, emo, sender_puid)
         return "Your emo for weibo ID: {} is: {}".format(wid, emo)
