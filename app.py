@@ -199,7 +199,7 @@ def handle_msg(msg):
     
     
     # This emo matching is not tested 
-    emo_pattern = re.compile("^ *emo +(\d+) +([\U00010000-\U0010ffff]) *$", re.IGNORECASE, flags=re.UNICODE)
+    emo_pattern = re.compile("^ *emo +(\d+) +([\U00010000-\U0010ffff]) *$", re.IGNORECASE|re.UNICODE)
     emo_match = emo_pattern.match(msg_content)
     if emo_match:
         wid = int(emo_match.groups()[0])
