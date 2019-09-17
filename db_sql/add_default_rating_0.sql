@@ -8,7 +8,7 @@ CREATE TABLE "weibo_feedbacks" (
 	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	"wid"	INTEGER NOT NULL,
 	"feedback_user_id"	TEXT NOT NULL,
-	"rating"	INTEGER DEFAULT 0,
+	"rating"	INTEGER DEFAULT -1,
 	"emo"	TEXT DEFAULT ""
 );
 
