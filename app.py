@@ -161,7 +161,7 @@ def handle_msg(search_results):
             send_msg("Dun have weibo ID: {}".format(wid), chat)
         return
 
-    searchweibo_kw_pattern = re.compile("^ *search(?:weibo)?((?: +\\w+)+) *$", re.IGNORECASE)
+    searchweibo_kw_pattern = re.compile("^ *search(?:weibo)?((?: +(?:\\w|[\U00010000-\U0010ffff])+)+) *$", re.IGNORECASE)
     searchweibo_kw_match = searchweibo_kw_pattern.match(msg_content)
     if searchweibo_kw_match:
         keywords = searchweibo_kw_match.groups()[0].strip().split(' ')
@@ -222,7 +222,7 @@ def handle_msg(search_results):
     
     
     # This emo matching is not tested 
-    emo_pattern = re.compile("^ *emo +(\d+) +([\U00010000-\U0010ffff]) *$", re.IGNORECASE|re.UNICODE)
+    emo_pattern = re.compile("^ *emo +(\d+) +([\U00010000-\U0010ffff]+) *$", re.IGNORECASE|re.UNICODE)
     emo_match = emo_pattern.match(msg_content)
     if emo_match:
         wid = int(emo_match.groups()[0])
