@@ -61,6 +61,13 @@ def get_random_weibo():
     if rows: return rows[0]
     return None
 
+def search_weibo(keywords):
+    cur = conn.cursor()
+    append_sql = ['msg_body like "?"'] * len(keywords)
+    query_sql = 'select * from weibos where ' + ' or '.join(append_sql)
+    cur.execute(query_sql, tuple(keywords))
+    rows = cur.fetchall()
+    return rows
 
 def update_weibo_feedback_rating(wid, rating, sender_puid):
     cur = conn.cursor()

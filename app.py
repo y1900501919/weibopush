@@ -5,7 +5,6 @@ import time
 import requests
 import re
 import random
-import emojis
 from apscheduler.scheduler import Scheduler
 from wxpy import Bot, ensure_one, embed
 
@@ -19,7 +18,8 @@ from db import (
     update_weibo_feedback_emo,
     save_weibo_feedback_rating, 
     save_weibo_feedback_emo,
-    get_all_ratings
+    get_all_ratings,
+    search_weibo
 )
 
 TEST = False
@@ -106,7 +106,7 @@ def send_weibo(status, chat=None, wid=None):
             feedback_str = '\n这条微博还没有评分，快来"rate {} [0-5]"或者"emo {} [emoji]"成为第一个评分的人吧¿'.format(wid, wid)
 
     status_text = status['msg_body'] + weibo_id_str + feedback_str
-    img_urls = status['img_urls']
+    # img_urls = status['img_urls']
     send_msg(status_text, chat)
 
 # Send message to grp
@@ -157,6 +157,22 @@ def handle_msg(msg):
         weibo = get_weibo_with_wid(wid)
         if weibo:
             send_weibo(weibo, chat)
+        else:
+            send_msg("Dun have weibo ID: {}".format(wid), chat)
+        return
+
+    searchweibo_kw_pattern = re.compile("^ *search(?:weibo)?((?: +\\w+)+) *$", re.IGNORECASE)
+    searchweibo_kw_match = searchweibo_kw_pattern.match(msg_content)
+    if searchweibo_kw_match:
+        keywords = searchweibo_kw_match.groups()[0].strip().split(' ')
+        weibo_lst = search_weibos_with_kw(keywords)
+        if weibo_lst:
+            if len(weibo_lst) == 1:
+                send_weibo(weibo_lst[0], chat)
+            else:
+                msg = "Got these:\n{}".format(' '.join([x['id'] for x in weibo_lst]))
+        else:
+            send_msg("Dun have weibos with these keywords", chat)
         return
 
     randomweibo_pattern = re.compile("^ *random(?:weibo)? *$", re.IGNORECASE)
@@ -249,6 +265,10 @@ def handle_msg(msg):
         send_msg(msg_content, chat)
         return
     
+
+def search_weibos_with_kw(keywords):
+    keywords = [x.strip() for x in keywords]
+    return search_weibo(keywords)
 
 
 def set_repeat_rate(new_rate):
