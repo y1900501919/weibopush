@@ -282,7 +282,8 @@ def process_search_results(weibo_lst, keywords):
             idx = content.index(keyword)
             idx_start = max(idx-ctx_length, 0)
             idx_end = min(idx+ctx_length+len(keyword), len(content)-1)
-            result += '\n{}: ...'.format(wid) + content[idx_start:idx_end] + '...'
+            context = [x.strip() for x in content[idx_start:idx_end].split('\n') if keyword in x][0]
+            result += '\n{}: ...'.format(wid) + context + '...'
     return result
 
 def set_repeat_rate(new_rate):
