@@ -203,7 +203,7 @@ def handle_msg(msg):
     emo_match = emo_pattern.match(msg_content)
     if emo_match:
         wid = int(emo_match.groups()[0])
-        emo = int(emo_match.groups()[1])
+        emo = emo_match.groups()[1]
         reply = emo_rate(wid, emo, sender_puid)
         send_msg(reply, chat)
         return 
