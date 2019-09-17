@@ -98,7 +98,7 @@ def send_weibo(status, chat=None, wid=None):
             feedback_str = ''
             ratings = [x['rating'] for x in feedbacks if x['rating'] >= 0]
             if ratings:
-                feedback_str += '\nRating: {}'.format(sum(ratings) * 1.0 / len(feedbacks))
+                feedback_str += '\nRating: {}'.format(sum(ratings) * 1.0 / len(ratings))
             emos = [x['emo'] for x in feedbacks if x['emo']]
             if emos:
                 feedback_str += '\n' + ''.join(emos)
