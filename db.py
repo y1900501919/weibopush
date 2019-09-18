@@ -36,7 +36,7 @@ def create_weibo_if_not_exists(weibo):
 def get_weibo_with_wid(wid):
     cur = conn.cursor()
 
-    query_sql = 'select * from weibos where id=?'
+    query_sql = 'select * from weibos where id=? and deleted=0'
     cur.execute(query_sql, (wid,))
     rows = cur.fetchall()
     if rows: return rows[0]
@@ -55,16 +55,30 @@ def get_weibo_feedback(wid, sender):
 
 def get_random_weibo():
     cur = conn.cursor()
-    query_sql = 'select * FROM weibos order by RANDOM() limit 1'
+    query_sql = 'select * FROM weibos where deleted=0 order by RANDOM() limit 1'
     cur.execute(query_sql)
     rows = cur.fetchall()
     if rows: return rows[0]
     return None
 
+def delete_weibo(wid):
+    cur = conn.cursor()
+    update_sql = 'update weibos set deleted=1 where wid=?'
+    cur.execute(update_sql, (wid,))
+
+    conn.commit()
+
+def recover_weibo(wid):
+    cur = conn.cursor()
+    update_sql = 'update weibos set deleted=0 where wid=?'
+    cur.execute(update_sql, (wid,))
+
+    conn.commit()
+
 def search_weibo(keywords):
     cur = conn.cursor()
     append_sql = ['msg_body like "%{}%"'.format(keyword) for keyword in keywords]
-    query_sql = 'select * from weibos where ' + ' or '.join(append_sql)
+    query_sql = 'select * from weibos where ' + ' or '.join(append_sql) + ' and deleted=0'
     cur.execute(query_sql)
     rows = cur.fetchall()
     return rows

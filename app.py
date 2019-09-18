@@ -19,7 +19,9 @@ from db import (
     save_weibo_feedback_rating, 
     save_weibo_feedback_emo,
     get_all_ratings,
-    search_weibo
+    search_weibo,
+    delete_weibo,
+    recover_weibo
 )
 
 TEST = False
@@ -221,7 +223,6 @@ def handle_msg(search_results):
         return
     
     
-    # This emo matching is not tested 
     emo_pattern = re.compile("^ *emo +(\d+) +([\U00010000-\U0010ffff]+) *$", re.IGNORECASE|re.UNICODE)
     emo_match = emo_pattern.match(msg_content)
     if emo_match:
@@ -230,6 +231,23 @@ def handle_msg(search_results):
         reply = emo_rate(wid, emo, sender_puid)
         send_msg(reply, chat)
         return 
+
+    
+    delete_pattern = re.compile("^ *delete +(\d+) *$", re.IGNORECASE)
+    delete_match = delete_pattern.match(msg_content)
+    if delete_match:
+        wid = int(emo_match.groups()[0])
+        delete(wid)
+        send_msg("Deleted weibo {}".format(wid), chat)
+        return
+
+    recover_pattern = re.compile("^ *recover +(\d+) *$", re.IGNORECASE)
+    recover_match = recover_pattern.match(msg_content)
+    if recover_match:
+        wid = int(emo_match.groups()[0])
+        recover(wid)
+        send_msg("Recoverd weibo {}".format(wid), chat)
+        return
 
 
     ###########################  Sudo ###########################
@@ -266,6 +284,12 @@ def handle_msg(search_results):
         send_msg(msg_content, chat)
         return
     
+
+def delete(wid):
+    delete_weibo(wid)
+
+def recover(wid):
+    recover_weibo(wid)
 
 def search_weibos_with_kw(keywords):
     keywords = [x.strip() for x in keywords]
