@@ -375,7 +375,7 @@ def replace_special(msg_content):
     if msg_content == '好爸爸':
         return True, '好儿子'
     if msg_content[0] in ['他', '她']:
-        return random.choice(['对，', '对啊，', '对哦，']) + msg_content
+        return True, random.choice(['对，', '对啊，', '对哦，']) + msg_content
     return False, msg_content
         
 ##################### End of handle commands ####################
