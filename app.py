@@ -236,7 +236,7 @@ def handle_msg(search_results):
     delete_pattern = re.compile("^ *delete +(\d+) *$", re.IGNORECASE)
     delete_match = delete_pattern.match(msg_content)
     if delete_match:
-        wid = int(emo_match.groups()[0])
+        wid = int(delete_match.groups()[0])
         delete_weibo(wid)
         send_msg("Deleted weibo {}".format(wid), chat)
         return
@@ -244,7 +244,7 @@ def handle_msg(search_results):
     recover_pattern = re.compile("^ *recover +(\d+) *$", re.IGNORECASE)
     recover_match = recover_pattern.match(msg_content)
     if recover_match:
-        wid = int(emo_match.groups()[0])
+        wid = int(recover_match.groups()[0])
         recover_weibo(wid)
         send_msg("Recoverd weibo {}".format(wid), chat)
         return
