@@ -63,14 +63,14 @@ def get_random_weibo():
 
 def delete_weibo(wid):
     cur = conn.cursor()
-    update_sql = 'update weibos set deleted=1 where wid=?'
+    update_sql = 'update weibos set deleted=1 where id=?'
     cur.execute(update_sql, (wid,))
 
     conn.commit()
 
 def recover_weibo(wid):
     cur = conn.cursor()
-    update_sql = 'update weibos set deleted=0 where wid=?'
+    update_sql = 'update weibos set deleted=0 where id=?'
     cur.execute(update_sql, (wid,))
 
     conn.commit()
