@@ -276,7 +276,8 @@ def handle_msg(search_results):
     has_special, msg_content = replace_special(msg_content)
     repeat_prob = REPEAT_RATE
     if '你' in msg_content or '我' in msg_content:
-        repeat_prob *= 2
+        repeat_prob *= 3
+        repeat_prob = min(repeat_prob, 0.8)
     if random.random() <= repeat_prob:
         niwotarepeat = niwota(msg_content)
         if niwotarepeat:
