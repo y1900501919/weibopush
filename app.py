@@ -237,7 +237,7 @@ def handle_msg(search_results):
     delete_match = delete_pattern.match(msg_content)
     if delete_match:
         wid = int(emo_match.groups()[0])
-        delete(wid)
+        delete_weibo(wid)
         send_msg("Deleted weibo {}".format(wid), chat)
         return
 
@@ -245,7 +245,7 @@ def handle_msg(search_results):
     recover_match = recover_pattern.match(msg_content)
     if recover_match:
         wid = int(emo_match.groups()[0])
-        recover(wid)
+        recover_weibo(wid)
         send_msg("Recoverd weibo {}".format(wid), chat)
         return
 
@@ -284,12 +284,6 @@ def handle_msg(search_results):
         send_msg(msg_content, chat)
         return
     
-
-def delete(wid):
-    delete_weibo(wid)
-
-def recover(wid):
-    recover_weibo(wid)
 
 def search_weibos_with_kw(keywords):
     keywords = [x.strip() for x in keywords]
