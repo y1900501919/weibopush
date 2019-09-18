@@ -274,7 +274,10 @@ def handle_msg(search_results):
     # 你我他复读机，放最后
 
     has_special, msg_content = replace_special(msg_content)
-    if random.random() <= REPEAT_RATE:
+    repeat_prob = REPEAT_RATE
+    if '你' in msg_content or '我' in msg_content:
+        repeat_prob *= 2
+    if random.random() <= repeat_prob:
         niwotarepeat = niwota(msg_content)
         if niwotarepeat:
             send_msg(niwotarepeat, chat)
@@ -306,7 +309,7 @@ def process_search_results(weibo_lst, keywords):
 
 def set_repeat_rate(new_rate):
     global REPEAT_RATE
-    REPEAT_RATE = min(max(0, new_rate), 0.75)
+    REPEAT_RATE = min(max(0, new_rate), 0.45)
 
 def roll(a, b, n=1):
     if a > b:
@@ -321,10 +324,8 @@ def roll_answer(answers):
     return random.choice(answers).strip()
 
 def niwota(msg):
-    msg = msg.replace('他', '<#T##>')
     msg = msg.replace('你', '他')
     msg = msg.replace('我', '你')
-    msg = msg.replace('<#T##>', '我')
     return msg
 
 def rate(wid, rating, sender_puid):
