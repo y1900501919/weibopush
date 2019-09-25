@@ -326,6 +326,8 @@ def handle_msg(search_results):
 def get_stats(poster_name, days_back=None):
     if not days_back:
         days_back = 10
+    else:
+        days_back = int(days_back)
     date_N_days_ago = (datetime.now() - timedelta(days=days_back)).date().strftime('%Y-%m-%d %H:%M:%S')
     stats = get_weibos_with_poster_after_date(poster_name, date_N_days_ago)
     if not stats:
