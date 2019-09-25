@@ -2,6 +2,7 @@ import os
 import atexit
 import shutil
 import time
+from datetime import datetime
 import requests
 import re
 import random
@@ -23,6 +24,7 @@ from db import (
     delete_weibo,
     recover_weibo
 )
+from plot import plot_polyline
 
 TEST = False
 REPEAT_RATE = 0.15
@@ -113,9 +115,8 @@ def send_weibo(status, chat=None, wid=None):
                 feedback_str += '\n' + ''.join(emos)
         else:
             feedback_str = '\n这条微博还没有评分，快来"rate {} [0-5]"或者"emo {} [emoji]"成为第一个评分的人吧¿'.format(wid, wid)
-
-    status_text = status['timestamp'] + '\n' + status['sender'] + '\n' + status['msg_body'] + '\n' + status['link'] + '\n' + weibo_id_str + feedback_str
-    # img_urls = status['img_urls']
+    
+    status_text = datetime.strptime(status['timestamp'], '%Y-%m-%d %H:%M:%S').strftime('%Y/%m/%d, %a, %H:%M:%S') + '\n' + status['sender'] + '\n' + status['msg_body'] + '\n' + status['link'] + '\n' + weibo_id_str + feedback_str
     send_msg(status_text, chat)
 
 # Send message to grp
@@ -127,11 +128,14 @@ def send_msg(text, chat=None):
 
 # Send image to grp
 # TODO: set a timeout
-# def send_img(url):
-#     img_path = "img_to_send.jpg"
-#     download_img(url, img_path)
-#     production_group.send_image(img_path)
-#     os.remove(img_path)
+def send_img(url):
+    img_path = "img_to_send.jpg"
+    download_img(url, img_path)
+    production_group.send_image(img_path)
+    os.remove(img_path)
+
+def send_local_img(path):
+    production_group.send_image(path)
 
 # Downloads an image from url and store at path
 def download_img(url, path):
@@ -256,13 +260,15 @@ def handle_msg(search_results):
         send_msg("Recoverd weibo {}".format(wid), chat)
         return
 
-    pulle_pattern = re.compile("^ *pulle *$", re.IGNORECASE)
-    pulle_match = pulle_pattern.match(msg_content)
-    if pulle_match:
-        count = get_new_status()
-        if count == 0:
-            send_msg("No new weibo.", chat)
+    stats_pattern = re.compile("^ *stats +(\\w+) *$", re.IGNORECASE)
+    stats_match = stats_pattern.match(msg_content)
+    if stats_match:
+        poster_name = stats_match.groups()[0]
+        stats_img_path = get_stats(poster_name)
+        send_local_img(stats_img_path)
         return
+
+
 
 
     ###########################  Sudo ###########################
@@ -303,6 +309,11 @@ def handle_msg(search_results):
         send_msg(msg_content, chat)
         return
     
+
+def get_stats(poster_name):
+
+    plot_polyline(poster_name + ' Stats', dates, values, 'stats.png')
+    return 'stats.png'
 
 def search_weibos_with_kw(keywords):
     keywords = [x.strip() for x in keywords]

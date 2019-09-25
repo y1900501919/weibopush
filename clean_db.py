@@ -1,5 +1,6 @@
 import sqlite3
 import json
+from datetime import datetime
 
 sqlite_file = 'data.db'
 conn = sqlite3.connect(sqlite_file, check_same_thread=False)
@@ -20,16 +21,14 @@ def all_weibos():
     return rows
 
 def process_weibo(weibo):
-    body = weibo['msg_body']
     wid = weibo['id']
-    body_lines = body.split('\n')
-    timestamp = body_lines[0]
-    sender = body_lines[1]
-    link = body_lines[-1]
-    msg_body = '\n'.join(body_lines[2:-1])
+    timestamp = weibo['timestamp']
+    old_format = '%Y/%m/%d, %a, %H:%M:%S'
+    new_format = '%Y-%m-%d %H:%M:%S'
+    timestamp = datetime.strptime(timestamp, old_format).strftime(new_format)
     cur = conn.cursor()
-    update_sql = 'update weibos set timestamp=?, sender=?, link=?, msg_body=? where id=?'
-    cur.execute(update_sql, (timestamp, sender, link, msg_body, wid,))
+    update_sql = 'update weibos set timestamp=? where id=?'
+    cur.execute(update_sql, (timestamp, wid,))
 
     conn.commit()
 

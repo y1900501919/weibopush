@@ -53,8 +53,7 @@ def process_status(status):
     status_link = WEIBOLINK + str(weibo_id)
     sender = status['user']['name']
     created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
-    timestamp_str = datetime.strftime(created_timestamp, '%Y/%m/%d, %a, %H:%M:%S')
-
+    timestamp_str = datetime.strftime(created_timestamp, '%Y-%m-%d %H:%M:%S')
     img_urls = [x['thumbnail_pic'].replace('thumbnail', 'large') for x in status['pic_urls']]
 
     result = dict()
