@@ -46,14 +46,19 @@ def get_weibo_with_wid(wid):
     return None
 
 
-# def get_weibos_with_poster_in_date_range(poster_name, date_start, date_end):
-#     cur = conn.cursor()
+def get_weibos_with_poster_after_date(poster_name, date_start):
+    cur = conn.cursor()
 
-#     query_sql = 'select * from weibos where sender=? and deleted=0'
-#     cur.execute(query_sql, (wid,))
-#     rows = cur.fetchall()
-#     if rows: return rows[0]
-#     return None
+    query_sql = '''
+        SELECT COUNT(id) n, date(timestamp) day
+        FROM weibos
+        WHERE sender=? and 
+        timestamp > ?
+        GROUP BY date(timestamp);
+    '''
+    cur.execute(query_sql, (poster_name, date_start,))
+    rows = cur.fetchall()
+    return rows
 
 
 def get_weibo_feedback(wid, sender):

@@ -2,7 +2,7 @@ import os
 import atexit
 import shutil
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import re
 import random
@@ -22,7 +22,8 @@ from db import (
     get_all_ratings,
     search_weibo,
     delete_weibo,
-    recover_weibo
+    recover_weibo,
+    get_weibos_with_poster_after_date
 )
 from plot import plot_polyline
 
@@ -319,7 +320,11 @@ def handle_msg(search_results):
     
 
 def get_stats(poster_name):
-
+    days_back = 10
+    date_N_days_ago = (datetime.now() - timedelta(days=days_back)).date().strftime('%Y-%m-%d %H:%M:%S')
+    stats = get_weibos_with_poster_after_date(poster_name, date_N_days_ago)
+    dates = [x['day'] for x in stats]
+    values = [x['n'] for x in stats]
     plot_polyline(poster_name + ' Stats', dates, values, 'stats.png')
     return 'stats.png'
 
