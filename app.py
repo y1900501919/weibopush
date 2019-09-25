@@ -269,12 +269,16 @@ def handle_msg(search_results):
             send_msg("No new weibo.", chat)
         return
 
-    stats_pattern = re.compile("^ *stats +(\\w+) *$", re.IGNORECASE)
+    stats_pattern = re.compile("^ *stats +(\\w+)(?: +(\\d+))? *$", re.IGNORECASE)
     stats_match = stats_pattern.match(msg_content)
     if stats_match:
         poster_name = stats_match.groups()[0]
-        stats_img_path = get_stats(poster_name)
-        send_local_img(stats_img_path, chat)
+        days_back = stats_match.groups()[1]
+        stats_img_path = get_stats(poster_name, days_back)
+        if stats_img_path:
+            send_local_img(stats_img_path, chat)
+        else:
+            send_msg("No data.", chat)
         return
 
 
@@ -319,11 +323,14 @@ def handle_msg(search_results):
         return
     
 
-def get_stats(poster_name):
-    days_back = 10
+def get_stats(poster_name, days_back=None):
+    if not days_back:
+        days_back = 10
     date_N_days_ago = (datetime.now() - timedelta(days=days_back)).date().strftime('%Y-%m-%d %H:%M:%S')
     stats = get_weibos_with_poster_after_date(poster_name, date_N_days_ago)
-    dates = [datetime.strptime(x['day'], '%Y-%m-%d %H:%M:%S').strftime('%m/%d') for x in stats]
+    if not stats:
+        return None
+    dates = [datetime.strptime(x['day'], '%Y-%m-%d').strftime('%m/%d') for x in stats]
     values = [x['n'] for x in stats]
     plot_polyline(dates, values, 'stats.png')
     return 'stats.png'
