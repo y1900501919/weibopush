@@ -264,7 +264,7 @@ def handle_msg(search_results):
     pulle_pattern = re.compile("^ *pulle *$", re.IGNORECASE)
     pulle_match = pulle_pattern.match(msg_content)
     if pulle_match:
-        count = get_timeline()
+        count = get_new_status()
         if not count:
             send_msg("No new weibo.", chat)
         return
