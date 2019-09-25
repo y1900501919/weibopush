@@ -253,9 +253,9 @@ def handle_msg(search_results):
         send_msg("Recoverd weibo {}".format(wid), chat)
         return
 
-    fetch_pattern = re.compile("^ *fetch *$", re.IGNORECASE)
-    fetch_match = fetch_pattern.match(msg_content)
-    if fetch_match:
+    pulle_pattern = re.compile("^ *pulle *$", re.IGNORECASE)
+    pulle_match = pulle_pattern.match(msg_content)
+    if pulle_match:
         count = get_new_status()
         if count == 0:
             send_msg("No new weibo.", chat)
