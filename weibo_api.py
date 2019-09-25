@@ -46,20 +46,22 @@ def get_timeline():
 
 # Process a status json obj to formatted text and image urls
 def process_status(status):
-    content = status['text']
+    msg_body = status['text']
     timestr = status['created_at']
     post_uid = status['user']['id']
     weibo_id = status['id']
-    user_link = WEIBOLINK + str(weibo_id)
-    poster_username = status['user']['name']
+    status_link = WEIBOLINK + str(weibo_id)
+    sender = status['user']['name']
     created_timestamp = datetime.strptime(timestr, WEIBO_API_TIME_FORMAT)
-    formatted_timestr = datetime.strftime(created_timestamp, '%Y/%m/%d, %a, %H:%M:%S')
+    timestamp_str = datetime.strftime(created_timestamp, '%Y/%m/%d, %a, %H:%M:%S')
 
-    msg_body = formatted_timestr + '\n' + poster_username + '\n' + content + '\n' + user_link
     img_urls = [x['thumbnail_pic'].replace('thumbnail', 'large') for x in status['pic_urls']]
 
     result = dict()
+    result['timestamp'] = timestamp_str
+    result['sender'] = sender
     result['msg_body'] = msg_body
+    result['link'] = status_link
     result['post_uid'] = post_uid
     result['weibo_id'] = weibo_id
     result['img_urls'] = img_urls

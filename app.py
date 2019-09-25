@@ -78,10 +78,13 @@ def get_new_status():
     if not statuses_to_send:
         return
     processed_statuses = [process_status(status) for status in statuses_to_send]
+    max_send_count = 3
+    sent_count = 0
     for status in processed_statuses:
         exists, wid = create_weibo_if_not_exists(status) # Saves to db if not exist
-        if not exists:
+        if not exists and sent_count < max_send_count:
             send_weibo(status, production_group, wid)
+            sent_count += 1
 
 
 
@@ -107,7 +110,7 @@ def send_weibo(status, chat=None, wid=None):
         else:
             feedback_str = '\n这条微博还没有评分，快来"rate {} [0-5]"或者"emo {} [emoji]"成为第一个评分的人吧¿'.format(wid, wid)
 
-    status_text = status['msg_body'] + weibo_id_str + feedback_str
+    status_text = status['timestamp'] + '\n' + status['sender'] + '\n' + status['msg_body'] + '\n' + status['link'] + '\n' + weibo_id_str + feedback_str
     # img_urls = status['img_urls']
     send_msg(status_text, chat)
 

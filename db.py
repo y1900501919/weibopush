@@ -18,6 +18,9 @@ def create_weibo_if_not_exists(weibo):
     msg_body = weibo['msg_body']
     post_uid = weibo['post_uid']
     weibo_id = weibo['weibo_id']
+    sender = weibo['sender']
+    link = weibo['link']
+    timestamp = weibo['timestamp']
     img_urls = json.dumps(weibo['img_urls'])
     
     cur = conn.cursor()
@@ -27,8 +30,8 @@ def create_weibo_if_not_exists(weibo):
     rows = cur.fetchall()
     if rows: return True, rows[0]['id']
 
-    insert_sql = 'insert into weibos(msg_body, post_uid, weibo_id, img_urls) values (?,?,?,?)'
-    cur.execute(insert_sql, (msg_body, post_uid, weibo_id, img_urls,))
+    insert_sql = 'insert into weibos(msg_body, timestamp, sender, link, post_uid, weibo_id, img_urls) values (?,?,?,?,?,?,?)'
+    cur.execute(insert_sql, (msg_body, timestamp, sender, link, post_uid, weibo_id, img_urls,))
     conn.commit()
     return False, cur.lastrowid
 
