@@ -2,11 +2,12 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import math
+import numpy as np
 
 def plot_polyline(x_names, values, save_path):
-    plt.plot(x_names, values)
-    plt.yticks(range(min(values), math.ceil(max(values))+1))
-    plt.xticks(rotation=60)
+    y_pos = np.arange(len(x_names))
+    plt.bar(y_pos, values, align='center', alpha=0.5)
+    plt.xticks(y_pos, x_names, rotation=60)
     plt.savefig(save_path)
     plt.clf()
     return save_path
