@@ -80,13 +80,16 @@ def get_new_status():
     processed_statuses = [process_status(status) for status in statuses_to_send]
     max_send_count = 3
     sent_count = 0
+    new_count = 0
     for status in processed_statuses:
         exists, wid = create_weibo_if_not_exists(status) # Saves to db if not exist
-        if not exists and sent_count < max_send_count:
-            send_weibo(status, production_group, wid)
-            sent_count += 1
+        if not exists:
+            new_count += 1
+            if sent_count < max_send_count:
+                send_weibo(status, production_group, wid)
+                sent_count += 1
 
-    return len(processed_statuses)
+    return new_count
 
 
 sched.add_cron_job(get_new_status, minute='*/5')
