@@ -260,6 +260,14 @@ def handle_msg(search_results):
         send_msg("Recoverd weibo {}".format(wid), chat)
         return
 
+    pulle_pattern = re.compile("^ *pulle *$", re.IGNORECASE)
+    pulle_match = pulle_pattern.match(msg_content)
+    if pulle_match:
+        count = get_timeline()
+        if not count:
+            send_msg("No new weibo.", chat)
+        return
+
     stats_pattern = re.compile("^ *stats +(\\w+) *$", re.IGNORECASE)
     stats_match = stats_pattern.match(msg_content)
     if stats_match:
