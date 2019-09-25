@@ -76,7 +76,7 @@ sched.start()
 def get_new_status():
     statuses_to_send = get_timeline()
     if not statuses_to_send:
-        return
+        return 0
     processed_statuses = [process_status(status) for status in statuses_to_send]
     max_send_count = 3
     sent_count = 0
@@ -86,6 +86,7 @@ def get_new_status():
             send_weibo(status, production_group, wid)
             sent_count += 1
 
+    return len(processed_statuses)
 
 
 sched.add_cron_job(get_new_status, minute='*/5')
@@ -250,6 +251,14 @@ def handle_msg(search_results):
         wid = int(recover_match.groups()[0])
         recover_weibo(wid)
         send_msg("Recoverd weibo {}".format(wid), chat)
+        return
+
+    fetch_pattern = re.compile("^ *fetch *$", re.IGNORECASE)
+    fetch_match = fetch_pattern.match(msg_content)
+    if fetch_match:
+        count = get_new_status()
+        if count == 0:
+            send_msg("No new weibo.", chat)
         return
 
 
