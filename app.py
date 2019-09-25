@@ -135,8 +135,8 @@ def send_img(url):
     production_group.send_image(img_path)
     os.remove(img_path)
 
-def send_local_img(path):
-    production_group.send_image(path)
+def send_local_img(path, chat):
+    chat.send_image(path)
 
 # Downloads an image from url and store at path
 def download_img(url, path):
@@ -274,7 +274,7 @@ def handle_msg(search_results):
     if stats_match:
         poster_name = stats_match.groups()[0]
         stats_img_path = get_stats(poster_name)
-        send_local_img(stats_img_path)
+        send_local_img(stats_img_path, chat)
         return
 
 
