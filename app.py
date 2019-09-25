@@ -323,9 +323,9 @@ def get_stats(poster_name):
     days_back = 10
     date_N_days_ago = (datetime.now() - timedelta(days=days_back)).date().strftime('%Y-%m-%d %H:%M:%S')
     stats = get_weibos_with_poster_after_date(poster_name, date_N_days_ago)
-    dates = [x['day'] for x in stats]
+    dates = [datetime.strptime(x['day'], '%Y-%m-%d %H:%M:%S').strftime('%m/%d') for x in stats]
     values = [x['n'] for x in stats]
-    plot_polyline(poster_name + ' Stats', dates, values, 'stats.png')
+    plot_polyline(dates, values, 'stats.png')
     return 'stats.png'
 
 def search_weibos_with_kw(keywords):
