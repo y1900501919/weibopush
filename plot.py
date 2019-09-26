@@ -25,7 +25,8 @@ def plot_stocks(data_lst, save_path):
     plt.title('- TODAY\'S STOCKS -')
     for x_lst, y_lst, legend in data_lst:
         plt.plot(x_lst, y_lst, '-o', label=legend)
-        plt.annotate(y_lst[-1], (x_lst[-1], y_lst[-1]))
+        if x_lst and y_lst:
+            plt.annotate(y_lst[-1], (x_lst[-1], y_lst[-1]))
     
     plt.xticks(rotation=60)
     plt.legend(loc='upper left')
