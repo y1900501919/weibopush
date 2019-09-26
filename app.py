@@ -160,7 +160,7 @@ def download_img(url, path):
 
 
 ######################## Handle commands ########################
-@bot.register([production_group, test_group, my_test_group], except_self=False)
+@bot.register([production_group, my_test_group], except_self=False)
 def handle_msg(search_results):
     chat = search_results.chat
     msg_content = search_results.text
