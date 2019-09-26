@@ -24,7 +24,7 @@ def get_user_info(puid):
         for stock in stocks:
             info += '\n{}: {} stocks'.format(stock['stock_name'], stock['count'])
     else:
-        info += 'No stocks'
+        info += '\nNo stocks'
     return info
 
 
