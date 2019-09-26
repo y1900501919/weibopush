@@ -320,7 +320,7 @@ def handle_msg(search_results):
     if stocks_buy_match:
         stock_name = stocks_buy_match.groups()[0]
         count = int(stocks_buy_match.groups()[1])
-        buy_result_message = buy_stocks(sender_puid, name, count)
+        buy_result_message = buy_stocks(sender_puid, stock_name, count)
         send_msg(buy_result_message, chat)
         return
 
@@ -329,7 +329,7 @@ def handle_msg(search_results):
     if stocks_sell_match:
         stock_name = stocks_sell_match.groups()[0]
         count = int(stocks_sell_match.groups()[1])
-        sell_result_message = sell_stocks(sender_puid, name, count)
+        sell_result_message = sell_stocks(sender_puid, stock_name, count)
         send_msg(sell_result_message, chat)
         return
 
