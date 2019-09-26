@@ -88,23 +88,23 @@ sched.start()
 
 
 # Run once per 5 minutes, get the statuses posted in past 5 minutes and send to grp
-def get_new_status():
+def get_new_status(send=True):
     statuses_to_send = get_timeline()
     if not statuses_to_send:
         return 0
     processed_statuses = [process_status(status) for status in statuses_to_send]
-    max_send_count = 3
-    sent_count = 0
-    new_count = 0
+    new_list = []
     for status in processed_statuses:
         exists, wid = create_weibo_if_not_exists(status) # Saves to db if not exist
         if not exists:
-            new_count += 1
-            if sent_count < max_send_count:
-                send_weibo(status, production_group, wid)
-                sent_count += 1
+            new_list.append((status, wid))
 
-    return new_count
+    if send:
+        for (status, wid) in new_list[:3]:
+            send_weibo(status, production_group, wid)
+            sent_count += 1
+
+    return len(new_list)
 
 
 sched.add_cron_job(get_new_status, minute='*/5')
@@ -274,9 +274,11 @@ def handle_msg(search_results):
     pulle_pattern = re.compile("^ *pulle *$", re.IGNORECASE)
     pulle_match = pulle_pattern.match(msg_content)
     if pulle_match:
-        count = get_new_status()
+        count = get_new_status(send=False)
         if not count:
             send_msg("No new weibo.", chat)
+        else:
+            send_msg("Pulled {} weibos.".format(count), chat)
         return
 
     stats_pattern = re.compile("^ *stats +(\\w+)(?: +(\\d+))? *$", re.IGNORECASE)
