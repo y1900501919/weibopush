@@ -156,7 +156,7 @@ def get_holder_stock(puid, stock_name):
     return rows[0] if rows else None
 
 def create_holder_stock(puid, stock_name, count):
-    dbinsert('insert into stocks(puid, stock_name, count)', (puid, stock_name, count,))
+    dbinsert('insert into stocks(puid, stock_name, count) values (?,?,?)', (puid, stock_name, count,))
 
 def update_holder_stock(puid, stock_name, count):
     dbupdate('update stocks set count=? where puid=? and stock_name=?', (count, puid, stock_name))
