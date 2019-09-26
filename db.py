@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from datetime import datetime, timedelta
+from utils import date_to_str
 
 sqlite_file = 'data.db'
 conn = sqlite3.connect(sqlite_file, check_same_thread=False)
@@ -173,4 +173,4 @@ def get_all_stocks():
     return result
 
 def stock_newest_date():
-    return (datetime.now() - timedelta(days=1)).date().strftime('%Y-%m-%d')
+    return date_to_str(days_ago=1)
