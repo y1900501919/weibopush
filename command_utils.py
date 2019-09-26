@@ -35,6 +35,7 @@ def get_stats(poster_name, days_back=None):
         days_back = 10
     else:
         days_back = int(days_back)
+    days_back = min(max(days_back, 1), 30)
     date_N_days_ago = (datetime.now() - timedelta(days=days_back)).date().strftime('%Y-%m-%d %H:%M:%S')
     stats = get_weibos_with_poster_after_date(poster_name, date_N_days_ago)
     if not stats:
