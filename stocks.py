@@ -33,8 +33,8 @@ def get_stocks_info():
     stocks_info = get_all_stocks()
     stocks_data = []
     for poster, trace in stocks_info:
-        dates = [x['day'] for x in trace]
-        counts = [x['n'] for x in trace]
+        dates = [x['day'] for x in trace[:-1]]
+        counts = [x['n'] for x in trace[:-1]]
         stocks_data.append((dates, counts, poster,))
 
     return plot_stocks(stocks_data, 'stocks.png')
