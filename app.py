@@ -2,7 +2,7 @@ import os
 import atexit
 import shutil
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 import requests
 import re
 import random
@@ -12,27 +12,37 @@ from wxpy import Bot, ensure_one, embed
 from weibo_api import get_timeline, process_status
 from db import (
     create_weibo_if_not_exists, 
-    get_weibo_with_wid, 
     get_random_weibo, 
-    get_weibo_feedback, 
-    update_weibo_feedback_rating, 
-    update_weibo_feedback_emo,
-    save_weibo_feedback_rating, 
-    save_weibo_feedback_emo,
     get_all_ratings,
-    search_weibo,
     delete_weibo,
-    recover_weibo,
-    get_weibos_with_poster_after_date,
-    check_symbol_is_poster,
-    check_alias_exists,
-    save_alias,
-    get_name_from_alias
+    recover_weibo
 )
-from plot import plot_polyline
+from command_utils import (
+    rate,
+    emo_rate,
+    get_stats,
+    attempt_create_alias,
+    get_weibo_with_wid,
+    search_weibos_with_kw,
+    process_search_results,
+    roll,
+    roll_answer,
+    replace_special,
+    niwota
+)
+from stocks import (
+    get_user_info,
+    get_stocks_info,
+    buy_stocks,
+    sell_stocks
+)
 
 TEST = False
 REPEAT_RATE = 0.15
+
+def set_repeat_rate(new_rate):
+    global REPEAT_RATE
+    REPEAT_RATE = min(max(0, new_rate), 0.45)
 
 # Init wechat bot
 bot = Bot(console_qr=True)
@@ -42,10 +52,9 @@ bot.messages.max_history = 1000
 # Ensure wechat group exists in list (Can only get by name)
 # required_group = 'testtest'
 production_group_name = '姐(shǎ)夫(bī)观察小组'
-test_group_name = 'testtest'
 my_test_group_name = 'bottest'
 myself_name = 'Des'
-required_chats = [production_group_name, test_group_name, my_test_group_name]
+required_chats = [production_group_name, my_test_group_name]
 
 while True:
     done = True
@@ -68,7 +77,6 @@ while True:
 
 # Chats
 production_group = ensure_one(bot.groups().search(production_group_name))
-test_group = ensure_one(bot.groups().search(test_group_name))
 my_test_group = ensure_one(bot.groups().search(my_test_group_name))
 myself = ensure_one(bot.friends().search(myself_name))
 
@@ -149,8 +157,6 @@ def download_img(url, path):
         with open(path, 'wb') as f:
             response.raw.decode_content = True
             shutil.copyfileobj(response.raw, f)
-
-
 
 
 ######################## Handle commands ########################
@@ -298,7 +304,33 @@ def handle_msg(search_results):
     me_pattern = re.compile("^ *me *$", re.IGNORECASE)
     me_match = me_pattern.match(msg_content)
     if me_match:
-        send_msg("My puid: {}".format(sender_puid), chat)
+        me_info = get_user_info(sender_puid)
+        send_msg(me_info, chat)
+        return
+
+    stocks_pattern = re.compile("^ *stocks *$", re.IGNORECASE)
+    stocks_match = stocks_pattern.match(msg_content)
+    if stocks_match:
+        stocks_info = get_stocks_info()
+        send_msg(stocks_info, chat)
+        return
+
+    stocks_buy_pattern = re.compile("^ *stocks +buy +(\\w+) +(\\d+) *$", re.IGNORECASE)
+    stocks_buy_match = stocks_buy_pattern.match(msg_content)
+    if stocks_buy_match:
+        stock_name = stocks_buy_match.groups()[0]
+        count = int(stocks_buy_match.groups()[1])
+        buy_result_message = buy_stocks(sender_puid, name, count)
+        send_msg(buy_result_message, chat)
+        return
+
+    stocks_sell_pattern = re.compile("^ *stocks +sell +(\\w+) +(\\d+) *$", re.IGNORECASE)
+    stocks_sell_match = stocks_sell_pattern.match(msg_content)
+    if stocks_sell_match:
+        stock_name = stocks_sell_match.groups()[0]
+        count = int(stocks_sell_match.groups()[1])
+        sell_result_message = sell_stocks(sender_puid, name, count)
+        send_msg(sell_result_message, chat)
         return
 
     ###########################  Sudo ###########################
@@ -338,127 +370,6 @@ def handle_msg(search_results):
     if has_special:
         send_msg(msg_content, chat)
         return
-    
-
-def attempt_create_alias(alias, name):
-    if check_symbol_is_poster(alias):
-        return "Alias {} is a weibo poster.".format(alias)
-    if check_alias_exists(alias):
-        return "Alias {} already exists.".format(alias)
-    if not check_symbol_is_poster(name):
-        return "Name {} is not a weibo poster.".format(name)
-    save_alias(alias, name)
-    return "Successfuly set {}'s alias to \"{}\"".format(name, alias)
-    
-
-def unalias(alias):
-    unaliased_name = get_name_from_alias(alias)
-    return unaliased_name if unaliased_name else alias
-
-
-def get_stats(poster_name, days_back=None):
-    poster_name = unalias(poster_name)
-    if not days_back:
-        days_back = 10
-    else:
-        days_back = int(days_back)
-    date_N_days_ago = (datetime.now() - timedelta(days=days_back)).date().strftime('%Y-%m-%d %H:%M:%S')
-    stats = get_weibos_with_poster_after_date(poster_name, date_N_days_ago)
-    if not stats:
-        return None
-    dates = [datetime.strptime(x['day'], '%Y-%m-%d').strftime('%m/%d') for x in stats]
-    values = [x['n'] for x in stats]
-    plot_polyline(dates, values, 'stats.png')
-    return 'stats.png'
-
-def search_weibos_with_kw(keywords):
-    keywords = [x.strip() for x in keywords]
-    return search_weibo(keywords)
-
-def process_search_results(weibo_lst, keywords):
-    result = '{} Results.'.format(len(weibo_lst))
-    for weibo in weibo_lst:
-        wid = weibo['id']
-        content = weibo['msg_body']
-        ctx_length = 4;
-        for keyword in keywords:
-            if keyword not in content: continue
-            idx = content.index(keyword)
-            idx_start = max(idx-ctx_length, 0)
-            idx_end = min(idx+ctx_length+len(keyword), len(content)-1)
-            context = [x.strip() for x in content[idx_start:idx_end].split('\n') if keyword in x][0]
-            result += '\n{}: ...'.format(wid) + context + '...'
-    return result
-
-def set_repeat_rate(new_rate):
-    global REPEAT_RATE
-    REPEAT_RATE = min(max(0, new_rate), 0.45)
-
-def roll(a, b, n=1):
-    if a > b:
-        a, b = b, a
-
-    if n > 20:
-        return "Maximum roll count is 20, your input is {}".format(n)
-
-    return ', '.join([str(random.randint(a, b)) for _ in range(n)])
-
-def roll_answer(answers):
-    return random.choice(answers).strip()
-
-def niwota(msg):
-    msg = msg.replace('你', '他')
-    msg = msg.replace('我', '你')
-    return msg
-
-def rate(wid, rating, sender_puid):
-    weibo = get_weibo_with_wid(wid)
-    if not weibo:
-        return "weibo ID: {} dun have".format(wid)
-    
-    existing_feedback = get_weibo_feedback(wid, sender_puid)
-    if (existing_feedback):
-        existing_rating = existing_feedback['rating']
-        update_weibo_feedback_rating(wid, rating, sender_puid)
-        if existing_rating >= 0:
-            return "Your rating for weibo ID: {} has been changed: {} => {}".format(wid, existing_rating, rating)
-        else:
-            return "Your rating for weibo ID: {} is: {}".format(wid, rating)
-    else:
-        save_weibo_feedback_rating(wid, rating, sender_puid)
-        return "Your rating for weibo ID: {} is: {}".format(wid, rating)
-
-
-def emo_rate(wid, emo, sender_puid):
-    weibo = get_weibo_with_wid(wid)
-    if not weibo:
-        return "weibo ID: {} dun have, hwat r u doing ah".format(wid)
-
-    existing_feedback = get_weibo_feedback(wid, sender_puid)
-    if existing_feedback:
-        existing_emo = existing_feedback['emo']
-        update_weibo_feedback_emo(wid, emo, sender_puid)
-        if existing_emo:
-            return "Your emo for weibo ID: {} has been changed: {} => {}".format(wid, existing_emo, emo)
-        else:
-            return "Your emo for weibo ID: {} is: {}".format(wid, emo)
-    else:
-        save_weibo_feedback_emo(wid, emo, sender_puid)
-        return "Your emo for weibo ID: {} is: {}".format(wid, emo)
-
-
-def replace_special(msg_content):
-    if '老白' in msg_content:
-        return True, msg_content.replace('老白', random.choice(['PekTohNee', 'Pek Pek', 'Pekky']))
-    if '白' in msg_content:
-        return True, msg_content.replace('白', 'pek')
-    if '头神' in msg_content:
-        return True, 'tsnb' + random.randint(0, 30) * '!'
-    if msg_content == '好爸爸':
-        return True, '好儿子'
-    if msg_content[0] in ['他', '她']:
-        return True, random.choice(['对，', '对啊，', '对哦，']) + msg_content
-    return False, msg_content
         
 ##################### End of handle commands ####################
 
