@@ -17,7 +17,7 @@ def get_user_info(puid):
         create_stockholder(puid)
     
     stockholder = get_stockholder(puid)
-    info += '\nMoney: {}'.format(stockholder['money'])
+    info += '\nMoney: ${}'.format(stockholder['money'])
 
     stocks = get_holder_stocks(puid)
     if stocks:

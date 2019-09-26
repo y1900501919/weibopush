@@ -162,7 +162,7 @@ def update_holder_stock(puid, stock_name, count):
     dbupdate('update stocks set count=? where puid=? and stock_name=?', (count, puid, stock_name))
 
 def get_stock_price(stock_name):
-    rows = dbget('select count(*) n from weibos where date(timestamp) = ?', (stock_newest_date(),))
+    rows = dbget('select count(*) n from weibos where date(timestamp) = ? and stock_name=?', (stock_newest_date(), stock_name,))
     if not rows:
         return 0
     return rows[0]['n']
