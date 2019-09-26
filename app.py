@@ -102,7 +102,6 @@ def get_new_status(send=True):
     if send:
         for (status, wid) in new_list[:3]:
             send_weibo(status, production_group, wid)
-            sent_count += 1
 
     return len(new_list)
 
