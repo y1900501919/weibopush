@@ -10,6 +10,7 @@ from db import (
     get_all_stocks,
     get_stock_price,
 )
+from plot import plot_stocks
 
 def get_user_info(puid):
     info = "My puid: {}".format(puid)
@@ -30,12 +31,13 @@ def get_user_info(puid):
 
 def get_stocks_info():
     stocks_info = get_all_stocks()
-    info = '- TODAY\'S STOCKS -'
-    for (k, v) in stocks_info.items():
-        money = '-' if v <= 0 else '${}'.format(v)
-        info += '\n{}: {}'.format(k, money)
-    
-    return info
+    stocks_data = []
+    for poster, trace in stocks_info:
+        dates = [x['day'] for x in trace]
+        counts = [x['n'] for x in trace]
+        stocks_data.append((dates, counts, poster,))
+
+    return plot_stocks(stocks_data, 'stocks.png')
 
 def buy_stocks(puid, stock_alias, count):
     stock_name = unalias(stock_alias)

@@ -169,8 +169,8 @@ def get_stock_price(stock_name):
 
 def get_all_stocks():
     stock_names = get_all_senders()
-    result = dict([(name, get_stock_price(name)) for name in stock_names])
-    return result
+    track_start_date = date_to_str(days_ago=10)
+    return [(poster, get_weibos_with_poster_after_date(poster, track_start_date)) for poster in stock_names]
 
 def stock_newest_date():
     return date_to_str(days_ago=1)

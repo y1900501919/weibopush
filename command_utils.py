@@ -1,7 +1,7 @@
 import random
 from datetime import datetime, timedelta
 
-from plot import plot_polyline
+from plot import plot_status_history
 from db import (
     search_weibo,
     get_weibo_with_wid, 
@@ -42,7 +42,7 @@ def get_stats(poster_name, days_back=None):
         return None
     dates = [datetime.strptime(x['day'], '%Y-%m-%d').strftime('%m/%d') for x in stats]
     values = [x['n'] for x in stats]
-    plot_polyline(dates, values, 'stats.png')
+    plot_status_history(dates, values, 'stats.png')
     return 'stats.png'
 
 def search_weibos_with_kw(keywords):

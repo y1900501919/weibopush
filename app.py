@@ -312,8 +312,11 @@ def handle_msg(search_results):
     stocks_pattern = re.compile("^ *stocks *$", re.IGNORECASE)
     stocks_match = stocks_pattern.match(msg_content)
     if stocks_match:
-        stocks_info = get_stocks_info()
-        send_msg(stocks_info, chat)
+        stocks_img_path = get_stocks_info()
+        if stocks_img_path:
+            send_local_img(stocks_img_path, chat)
+        else:
+            send_msg('No data.', chat)
         return
 
     stocks_buy_pattern = re.compile("^ *stocks +buy +(\\w+) +(\\d+) *$", re.IGNORECASE)
