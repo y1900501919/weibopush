@@ -24,9 +24,10 @@ from db import (
     delete_weibo,
     recover_weibo,
     get_weibos_with_poster_after_date,
-    check_alias_is_poster,
+    check_symbol_is_poster,
     check_alias_exists,
-    save_alias
+    save_alias,
+    get_name_from_alias
 )
 from plot import plot_polyline
 
@@ -334,15 +335,23 @@ def handle_msg(search_results):
     
 
 def attempt_create_alias(alias, name):
-    if check_alias_is_poster(alias):
+    if check_symbol_is_poster(alias):
         return "Alias {} is a weibo poster.".format(alias)
     if check_alias_exists(alias):
         return "Alias {} already exists.".format(alias)
+    if not check_symbol_is_poster(name):
+        return "Name {} is not a weibo poster.".format(name)
     save_alias(alias, name)
     return "Successfuly set {}'s alias to \"{}\"".format(name, alias)
     
 
+def unalias(alias):
+    unaliased_name = get_name_from_alias(alias)
+    return unaliased_name if unaliased_name else alias
+
+
 def get_stats(poster_name, days_back=None):
+    poster_name = unalias(poster_name)
     if not days_back:
         days_back = 10
     else:
