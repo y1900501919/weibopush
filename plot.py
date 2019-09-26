@@ -5,9 +5,6 @@ import math
 import numpy as np
 from utils import date_to_str
 
-matplotlib.rcParams['font.family'] = 'Yahei'
-matplotlib.rcParams['axes.unicode_minus']=False
-
 def plot_status_history(x_names, values, save_path):
     y_pos = np.arange(len(x_names))
     barlist = plt.bar(y_pos, values, align='center', alpha=0.5)
