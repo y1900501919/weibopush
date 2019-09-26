@@ -295,6 +295,12 @@ def handle_msg(search_results):
         send_msg(save_result, chat)
         return
 
+    me_pattern = re.compile("^ *me *$", re.IGNORECASE)
+    me_match = me_pattern.match(msg_content)
+    if me_match:
+        send_msg("My puid: {}".format(sender_puid), chat)
+        return
+
     ###########################  Sudo ###########################
     sudo_pattern = re.compile(" *sudo (.+) *$", re.IGNORECASE)
     sudo_match = sudo_pattern.match(msg_content)
