@@ -42,7 +42,7 @@ def get_stats(poster_name, days_back=None):
         return None
     dates = [datetime.strptime(x['day'], '%Y-%m-%d').strftime('%m/%d') for x in stats]
     values = [x['n'] for x in stats]
-    plot_status_history(dates, values, 'stats.png')
+    plot_status_history(dates, values, 'STATS OF {}'.format(poster_name), 'stats.png')
     return 'stats.png'
 
 def search_weibos_with_kw(keywords):
