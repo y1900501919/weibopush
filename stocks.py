@@ -32,7 +32,8 @@ def get_stocks_info():
     stocks_info = get_all_stocks()
     info = '- TODAY\'S STOCKS -'
     for (k, v) in stocks_info.items():
-        info += '\n{}: ${}'.format(k, v)
+        money = '-' if v <= 0 else '${}'.format(v)
+        info += '\n{}: {}'.format(k, money)
     
     return info
 
