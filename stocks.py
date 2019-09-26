@@ -30,9 +30,9 @@ def get_user_info(puid):
 
 def get_stocks_info():
     stocks_info = get_all_stocks()
-    info = '- TODAYS STOCKS -\n'
+    info = '- TODAYS STOCKS -'
     for (k, v) in stocks_info.items():
-        info += '{}: ${}'.format(k, v)
+        info += '\n{}: ${}'.format(k, v)
     
     return info
 
