@@ -46,6 +46,32 @@ def get_weibo_with_wid(wid):
     return None
 
 
+def check_alias_is_poster(alias):
+    cur = conn.cursor()
+
+    query_sql = 'SELECT sender FROM weibos WHERE sender=?'
+    cur.execute(query_sql, (alias,))
+    rows = cur.fetchall()
+    return True if rows else False
+
+def check_alias_exists(alias):
+    cur = conn.cursor()
+
+    query_sql = 'SELECT alias FROM name_alias WHERE alias=?'
+    cur.execute(query_sql, (alias,))
+    rows = cur.fetchall()
+    return True if rows else False
+
+def save_alias(alias, name):
+    cur = conn.cursor()
+    update_sql = 'insert into name_alias(name, alias) values (?,?)'
+    cur.execute(update_sql, (name, alias,))
+
+    conn.commit()
+    pass
+
+
+
 def get_weibos_with_poster_after_date(poster_name, date_start):
     cur = conn.cursor()
 

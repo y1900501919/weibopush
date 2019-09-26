@@ -23,7 +23,10 @@ from db import (
     search_weibo,
     delete_weibo,
     recover_weibo,
-    get_weibos_with_poster_after_date
+    get_weibos_with_poster_after_date,
+    check_alias_is_poster,
+    check_alias_exists,
+    save_alias
 )
 from plot import plot_polyline
 
@@ -282,7 +285,14 @@ def handle_msg(search_results):
         return
 
 
-
+    alias_pattern = re.compile("^ *alias +(\\w+) *= *(\\w+) *$", re.IGNORECASE)
+    alias_match = alias_pattern.match(msg_content)
+    if alias_match:
+        alias = alias_match.groups()[0]
+        name = alias_match.groups()[1]
+        save_result = attempt_create_alias(alias, name)
+        send_msg(save_result, chat)
+        return
 
     ###########################  Sudo ###########################
     sudo_pattern = re.compile(" *sudo (.+) *$", re.IGNORECASE)
@@ -321,6 +331,15 @@ def handle_msg(search_results):
     if has_special:
         send_msg(msg_content, chat)
         return
+    
+
+def attempt_create_alias(alias, name):
+    if check_alias_is_poster(alias):
+        return "Alias {} is a weibo poster.".format(alias)
+    if check_alias_exists(alias):
+        return "Alias {} already exists.".format(alias)
+    save_alias(alias, name)
+    return "Successfuly set {}'s alias to \"{}\"".format(name, alias)
     
 
 def get_stats(poster_name, days_back=None):
