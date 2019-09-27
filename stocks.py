@@ -13,7 +13,7 @@ from db import (
 from plot import plot_stocks
 
 def get_user_info(card):
-    info = "Me: {}".format(card)
+    info = ""
     if not get_stockholder(card):
         create_stockholder(card)
     
