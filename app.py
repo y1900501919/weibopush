@@ -165,6 +165,7 @@ def handle_msg(search_results):
     msg_content = search_results.text
     sender = search_results.sender
     sender_puid = sender.puid
+    sender_card = sender.card
     if not msg_content:
         return
 
@@ -239,7 +240,7 @@ def handle_msg(search_results):
     if rate_score_match:
         wid = int(rate_score_match.groups()[0])
         rating = int(rate_score_match.groups()[1])
-        reply = rate(wid, rating, sender_puid)
+        reply = rate(wid, rating, sender_card)
         send_msg(reply, chat)
         return
     
@@ -249,7 +250,7 @@ def handle_msg(search_results):
     if emo_match:
         wid = int(emo_match.groups()[0])
         emo = emo_match.groups()[1]
-        reply = emo_rate(wid, emo, sender_puid)
+        reply = emo_rate(wid, emo, sender_card)
         send_msg(reply, chat)
         return 
 
@@ -305,7 +306,7 @@ def handle_msg(search_results):
     me_pattern = re.compile("^ *me *$", re.IGNORECASE)
     me_match = me_pattern.match(msg_content)
     if me_match:
-        me_info = get_user_info(sender_puid)
+        me_info = get_user_info(sender_card)
         send_msg(me_info, chat)
         return
 
@@ -324,7 +325,7 @@ def handle_msg(search_results):
     if stocks_buy_match:
         stock_name = stocks_buy_match.groups()[0]
         count = int(stocks_buy_match.groups()[1])
-        buy_result_message = buy_stocks(sender_puid, stock_name, count)
+        buy_result_message = buy_stocks(sender_card, stock_name, count)
         send_msg(buy_result_message, chat)
         return
 
@@ -333,7 +334,7 @@ def handle_msg(search_results):
     if stocks_sell_match:
         stock_name = stocks_sell_match.groups()[0]
         count = int(stocks_sell_match.groups()[1])
-        sell_result_message = sell_stocks(sender_puid, stock_name, count)
+        sell_result_message = sell_stocks(sender_card, stock_name, count)
         send_msg(sell_result_message, chat)
         return
 

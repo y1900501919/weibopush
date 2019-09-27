@@ -12,15 +12,15 @@ from db import (
 )
 from plot import plot_stocks
 
-def get_user_info(puid):
-    info = "My puid: {}".format(puid)
-    if not get_stockholder(puid):
-        create_stockholder(puid)
+def get_user_info(card):
+    info = "Me: {}".format(card)
+    if not get_stockholder(card):
+        create_stockholder(card)
     
-    stockholder = get_stockholder(puid)
+    stockholder = get_stockholder(card)
     info += '\nMoney: ${}'.format(stockholder['money'])
 
-    stocks = get_holder_stocks(puid)
+    stocks = get_holder_stocks(card)
     if stocks:
         for stock in stocks:
             info += '\n{}: {} stocks'.format(stock['stock_name'], stock['count'])
