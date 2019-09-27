@@ -18,7 +18,7 @@ def get_user_info(card):
         create_stockholder(card)
     
     stockholder = get_stockholder(card)
-    info += '\nMoney: ${}'.format(stockholder['money'])
+    info += 'Money: ${}'.format(stockholder['money'])
 
     stocks = get_holder_stocks(card)
     if stocks:
