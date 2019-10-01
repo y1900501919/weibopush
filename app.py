@@ -38,7 +38,7 @@ from stocks import (
 )
 
 TEST = False
-REPEAT_RATE = 0.15
+REPEAT_RATE = 0.01
 
 def set_repeat_rate(new_rate):
     global REPEAT_RATE
