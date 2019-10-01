@@ -17,11 +17,13 @@ WEIBOLINK = "https://m.weibo.cn/status/"
 
 
 # Get statuses in past 5 minutes
-def get_timeline():
+def get_timeline(page=None):
     url = REQUEST_URL
     response_text = None
     for i, access_token in enumerate(ACCESS_TOKENS):
         get_params = {"access_token": access_token, "count": 100}
+        if page:
+            get_params["page"] = page
         response = requests.get(url, params=get_params)
         if (response.status_code == 200):
             print("Using token {}: {} to query".format(i, access_token))
