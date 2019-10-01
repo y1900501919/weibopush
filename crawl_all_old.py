@@ -15,8 +15,9 @@ def run():
         processed_statuses = [process_status(status) for status in statuses]
         for status in processed_statuses:
             exists, wid = create_weibo_if_not_exists(status)
-            if exists:
+            if not exists:
                 count += 1;
         
         print("Saved {} new entries".format(count))
-        
+        n += 1
+
