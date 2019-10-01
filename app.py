@@ -336,6 +336,12 @@ def handle_msg(search_results):
         send_msg(sell_result_message, chat)
         return
 
+    ping_pattern = re.compile("^ *ping *$", re.IGNORECASE)
+    ping_match = ping_pattern.match(msg_content)
+    if ping_match:
+        send_msg("pong", chat)
+        return
+
     ###########################  Sudo ###########################
     sudo_pattern = re.compile(" *sudo (.+) *$", re.IGNORECASE)
     sudo_match = sudo_pattern.match(msg_content)
