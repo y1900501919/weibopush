@@ -343,7 +343,7 @@ def handle_msg(search_results):
         send_msg("pong", chat)
         return
 
-    osurecent_pattern = re.compile("^ *osurecent +(\w+) *$", re.IGNORECASE)
+    osurecent_pattern = re.compile("^ *osurecent(?: +(\w+))? *$", re.IGNORECASE)
     osurecent_match = osurecent_pattern.match(msg_content)
     if osurecent_match:
         osu_username = osurecent_match[0]
