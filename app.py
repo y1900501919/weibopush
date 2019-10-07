@@ -36,6 +36,7 @@ from stocks import (
     buy_stocks,
     sell_stocks
 )
+from osu_utils import osurecent
 
 TEST = False
 REPEAT_RATE = 0.01
@@ -340,6 +341,13 @@ def handle_msg(search_results):
     ping_match = ping_pattern.match(msg_content)
     if ping_match:
         send_msg("pong", chat)
+        return
+
+    osurecent_pattern = re.compile("^ *osurecent +(\w+) *$", re.IGNORECASE)
+    osurecent_match = osurecent_pattern.match(msg_content)
+    if osurecent_match:
+        osu_username = osurecent_match[0]
+        send_msg(osurecent(osu_username), chat)
         return
 
     ###########################  Sudo ###########################
