@@ -9,7 +9,7 @@ def get_recent(username):
     fmt = '%Y-%m-%d %H:%M:%S'
     dt = datetime.strptime(t, fmt)
     from_zone = tz.tzutc()
-    to_zone = tz.tzlocal()
+    to_zone = tz.gettz('Singapore')
     dt=dt.replace(tzinfo=from_zone)
     dt=dt.astimezone(to_zone)
     return "{}: {}".format(username, dt.strftime(fmt))
