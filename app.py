@@ -365,7 +365,7 @@ def handle_msg(search_results):
 
     # 你我他复读机，放最后
 
-    has_special, msg_content = replace_special(msg_content)
+    special_repeat_prob, msg_content = replace_special(msg_content)
     repeat_prob = REPEAT_RATE
     if '你' in msg_content or '我' in msg_content:
         repeat_prob *= 3
@@ -376,7 +376,7 @@ def handle_msg(search_results):
             send_msg(niwotarepeat, chat)
             return
 
-    if has_special:
+    if random.random() < special_repeat_prob:
         send_msg(msg_content, chat)
         return
         
