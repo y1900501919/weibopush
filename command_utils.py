@@ -119,14 +119,22 @@ def emo_rate(wid, emo, sender_puid):
 
 
 def replace_special(msg_content):
-    if '老白' in msg_content:
-        return 1, msg_content.replace('老白', random.choice(['PekTohNee', 'Pek Pek', 'Pekky', 'Pekiro']))
-    if '白' in msg_content:
-        return 1, msg_content.replace('白', 'pek')
-    if '头神' in msg_content:
-        return 1, 'tsnb' + random.randint(0, 30) * '!'
+    # Fixed
     if msg_content == '好爸爸':
         return 1, '好儿子'
+
+    # Replace
+    prob = 0
     if msg_content[0] in ['他', '她']:
-        return 0.03, random.choice(['对，', '对啊，', '对哦，']) + msg_content
-    return 0, msg_content
+        prob = 0.03
+        msg_content = random.choice(['对，', '对啊，', '对哦，']) + msg_content
+    if '老白' in msg_content:
+        prob = 1
+        msg_content = msg_content.replace('老白', random.choice(['PekTohNee', 'Pek Pek', 'Pekky', 'Pekiro']))
+    if '白' in msg_content:
+        prob = 1
+        msg_content = msg_content.replace('白', 'pek')
+    if '头神' in msg_content:
+        prob = 1
+        msg_content = msg_content.replace('头神', 'tsnb' + random.randint(0, 30) * '!')
+    return prob, msg_content
