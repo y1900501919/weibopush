@@ -15,7 +15,7 @@ def get_recent(username):
     return "{}: {}".format(username, dt.strftime(fmt))
 
 def get_all_recents():
-    userlist = ["fuko2", "LeafBell"]
+    userlist = ["fuko2", "LeafBell", "mayusan"]
     return '\n'.join([get_recent(x) for x in userlist])
 
 def osurecent(username=None):
