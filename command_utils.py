@@ -136,5 +136,5 @@ def replace_special(msg_content):
         msg_content = msg_content.replace('白', 'pek')
     if '头神' in msg_content:
         prob = 1
-        msg_content = msg_content.replace('头神', random.choice(['我们的主', '上帝', 'God', '頭神様', '圣上', '王', '我们的红太阳']))
+        msg_content = msg_content.replace('头神', random.choice(['我们的主', '我们的上帝', 'God', '頭神様', '我们的圣上', '我们的王', '我们的红太阳', '绝对强者', '天之骄子・木易']))
     return prob, msg_content
