@@ -28,7 +28,8 @@ from command_utils import (
     roll,
     roll_answer,
     replace_special,
-    niwota
+    niwota,
+    create_tss
 )
 from stocks import (
     get_user_info,
@@ -160,10 +161,10 @@ def download_img(url, path):
 
 ######################## Handle commands ########################
 @bot.register([production_group, my_test_group], except_self=False)
-def handle_msg(search_results):
-    chat = search_results.chat
-    msg_content = search_results.text
-    sender = search_results.sender
+def handle_msg(msg):
+    chat = msg.chat
+    msg_content = msg.text
+    sender = msg.sender
     sender_name = sender.nick_name
     if not msg_content:
         return
@@ -348,6 +349,14 @@ def handle_msg(search_results):
     if osurecent_match:
         osu_username = osurecent_match.groups()[0]
         send_msg(osurecent(osu_username), chat)
+        return
+
+    tss_pattern = re.compile("^ *tss +(\w+) *$", re.IGNORECASE)
+    tss_match = tss_pattern.match(msg_content)
+    if tss_match:
+        tss = tss_match.groups()[0]
+        create_tss(tss)
+        chat.send_sticker("ts.png")
         return
 
     ###########################  Sudo ###########################

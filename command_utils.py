@@ -17,6 +17,7 @@ from db import (
     unalias,
     get_name_from_alias
 )
+from ts_speak import draw_tss
 
 def attempt_create_alias(alias, name):
     if check_symbol_is_poster(alias):
@@ -81,6 +82,9 @@ def niwota(msg):
     msg = msg.replace('你', '他')
     msg = msg.replace('我', '你')
     return msg
+
+def create_tss(tss):
+    draw_tss(tss)
 
 def rate(wid, rating, sender_puid):
     weibo = get_weibo_with_wid(wid)
