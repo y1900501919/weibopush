@@ -356,7 +356,7 @@ def handle_msg(msg):
     if tss_match:
         tss = tss_match.groups()[0]
         create_tss(tss)
-        chat.send_sticker("ts.png")
+        chat.send_image("ts.png")
         return
 
     ###########################  Sudo ###########################
