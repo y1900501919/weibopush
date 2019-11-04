@@ -351,11 +351,11 @@ def handle_msg(msg):
         send_msg(osurecent(osu_username), chat)
         return
 
-    tss_pattern = re.compile("^ *tss +(\w+) *$", re.IGNORECASE)
+    tss_pattern = re.compile("^ *tss +(.+) *$", re.IGNORECASE)
     tss_match = tss_pattern.match(msg_content)
     if tss_match:
         tss = tss_match.groups()[0]
-        create_tss(tss)
+        create_tss(tss.strip())
         production_group.send_image("ts.png")
         return
 
